@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from sqlalchemy import select
+
 from base import async_session_maker
 from order.models import User
 
@@ -19,6 +21,7 @@ class Service:
                 print(user.tg_user_id)
                 stmt = db_session.add(user)
                 await db_session.commit()
+                return tg_username
             except:
                 print("Ёпта")
 
@@ -41,10 +44,10 @@ class Service:
             return False
 
     @staticmethod
-    async def get_user(user_id):
+    async def get_user(tg_user_id):
         async with async_session_maker() as db_session:
-            user = await db_session.get(User, user_id)
-            if user is not None:
+            user = await db_session.execute(select(User).filter(User.tg_user_id == tg_user_id))
+            if user.all():
                 return user
             return False
 

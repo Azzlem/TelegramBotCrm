@@ -17,8 +17,11 @@ async def process_start_command(message: Message):
 
 @dp.message(Command(commands=["registr"]))
 async def process_register_command(message: Message):
-    await Service.add_user(message.from_user.username, message.from_user.id)
-    await message.answer("ёпта")
+    if await Service.get_user(message.from_user.id):
+        await message.answer(f"{message.from_user.username}, вы уже зарегистрированы!")
+    else:
+        answer = await Service.add_user(message.from_user.username, message.from_user.id)
+        await message.answer(f"{answer} - вы успешно зарегистрированы")
 
 
 if __name__ == '__main__':
