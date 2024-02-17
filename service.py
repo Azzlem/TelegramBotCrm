@@ -7,11 +7,14 @@ from order.models import User
 
 class Service:
     @staticmethod
-    async def add_user(data, tg_user_id):
+    async def add_user(tg_username, tg_user_id):
         async with async_session_maker() as db_session:
             try:
-                data = json.loads(data)
-                data['tg_user_id'] = str(tg_user_id)
+                data = {
+                    'tg_user_id': tg_user_id,
+                    'name': tg_username
+                }
+                print(data)
                 user = User(**data)
                 print(user.tg_user_id)
                 stmt = db_session.add(user)
@@ -33,8 +36,8 @@ class Service:
     async def valid_user(user_id):
         async with async_session_maker() as db_session:
             user = await db_session.get(User, user_id)
-            if user is not None:
-                return user.id == 2
+            if user.status:
+                return True
             return False
 
     @staticmethod

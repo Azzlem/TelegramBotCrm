@@ -15,9 +15,9 @@ async def process_start_command(message: Message):
     await message.answer('Привет!\nЯ тестовый бот!')
 
 
-@dp.message()
+@dp.message(Command(commands=["registr"]))
 async def process_register_command(message: Message):
-    await Service.add_user(message.text, message.from_user.id)
+    await Service.add_user(message.from_user.username, message.from_user.id)
     await message.answer("ёпта")
 
 

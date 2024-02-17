@@ -12,9 +12,9 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[intpk]
-    tg_user_id: Mapped[str] = mapped_column(unique=True)
+    tg_user_id: Mapped[int] = mapped_column(unique=True)
     name: Mapped[str]
-    phone: Mapped[str]
+    status: Mapped[bool] = mapped_column(default=False)
 
 
 class Order(Base):
