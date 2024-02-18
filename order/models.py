@@ -14,13 +14,13 @@ class User(Base):
     id: Mapped[intpk]
     tg_user_id: Mapped[int] = mapped_column(unique=True)
     name: Mapped[str]
-    status: Mapped[bool] = mapped_column(default=False)
+    status: Mapped[int] = mapped_column(default=0)
 
 
 class Order(Base):
     __tablename__ = 'order'
     id: Mapped[intpk]
-    user_id: Mapped[str] = mapped_column(ForeignKey('user.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     client_name: Mapped[str]
     client_phone: Mapped[str]
     device: Mapped[str]
