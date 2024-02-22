@@ -9,12 +9,10 @@ class Service:
         async with async_session_maker() as db_session:
             try:
                 data = {
-                    'tg_user_id': tg_user_id,
+                    'tg_user_id': str(tg_user_id),
                     'name': tg_username
                 }
-                print(data)
                 user = User(**data)
-                print(user.tg_user_id)
                 stmt = db_session.add(user)
                 await db_session.commit()
                 return tg_username
@@ -22,7 +20,7 @@ class Service:
                 print("Ёпта")
 
     @staticmethod
-    async def del_user(user_id):
+    async def del_user(user_id, db_session):
         async with async_session_maker() as db_session:
             user = await db_session.get(User, user_id)
             if user is not None:
@@ -34,7 +32,7 @@ class Service:
     @staticmethod
     async def valid_user(user_id):
         async with async_session_maker() as db_session:
-            user = await db_session.execute(select(User).where(User.tg_user_id == user_id))
+            user = await db_session.execute(select(User).where(User.tg_user_id == str(user_id)))
             a = user.all()
             if not a:
                 return False
@@ -48,7 +46,7 @@ class Service:
     @staticmethod
     async def get_user(tg_user_id):
         async with async_session_maker() as db_session:
-            user = await db_session.execute(select(User).filter(User.tg_user_id == tg_user_id))
+            user = await db_session.execute(select(User).filter(User.tg_user_id == str(tg_user_id)))
             if user.all():
                 return user
             return False

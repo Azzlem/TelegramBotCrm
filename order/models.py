@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[intpk]
-    tg_user_id: Mapped[int] = mapped_column(unique=True)
+    tg_user_id: Mapped[str] = mapped_column(unique=True)
     name: Mapped[str]
     status: Mapped[int] = mapped_column(default=0)
 
