@@ -1,11 +1,6 @@
-import asyncio
-import json
-import uuid
-
-from sqlalchemy import select, exists
-
-from base import async_session_maker
+from sqlalchemy import select, update, delete
 from order.models import User, Order
+from service.base import async_session_maker
 
 
 class Service:
@@ -101,13 +96,42 @@ class Service:
                 result.append(el[0])
             answer = ''
             for elem in result:
-                answer += (f"Имя пользователя: {elem.name}\n"
+                answer += (f"Имя пользователя: @{elem.name}\n"
                            f"ID в базе: {elem.id}\n"
                            f"Статус в компании: {elem.status}\n\n\n")
 
             return answer
 
-# print(asyncio.run(Service().add_user({"id": "2", "tg_user_id": "555пкакуferwwfwатииаптfrf4reftмымвыамиавава5555", "name": "Alex", "phone": "89650005727"})))
-# print(asyncio.run(Service.valid_user(3)))
-# print(asyncio.run(Service.del_user(4)))
-# print(asyncio.run(Service.get_user(2)))
+    @staticmethod
+    async def change_perms_user(data):
+        async with async_session_maker() as db_session:
+            await db_session.execute(update(User).where(User.id == int(data['user_id'])).values(status=int(data['status'])))
+            await db_session.commit()
+            return True
+
+    @staticmethod
+    async def delete_user(res):
+        async with async_session_maker() as db_session:
+            await db_session.execute(delete(User).where(User.id == res['user_id']))
+            await db_session.commit()
+            return True
+
+    @staticmethod
+    async def update_order(data):
+        async with async_session_maker() as db_session:
+            data_temp = data.pop('id_order')
+            print(data_temp)
+            await db_session.execute(update(Order).where(Order.id == int(data_temp)).values(
+                user_id=int(data['user_id']),
+                client_name=data['client_name'],
+                client_phone=data['client_phone'],
+                device=data['device'],
+                mulfunction=data['mulfunction']
+            ))
+            await db_session.commit()
+
+            print(data)
+
+
+
+
