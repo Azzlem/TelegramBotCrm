@@ -88,17 +88,18 @@ class Service:
     async def get_all_users():
         async with async_session_maker() as db_session:
             users = await db_session.execute(select(User))
-            users = users.all()
-            result = []
-            for el in users:
-                result.append(el[0])
-            answer = ''
-            for elem in result:
-                answer += (f"Имя пользователя: @{elem.name}\n"
-                           f"ID в базе: {elem.id}\n"
-                           f"Статус в компании: {elem.status}\n\n\n")
-
-            return answer, len(result)
+            users = users.scalars().all()
+            return users
+            # result = []
+            # for el in users:
+            #     result.append(el[0])
+            # answer = ''
+            # for elem in result:
+            #     answer += (f"Имя пользователя: @{elem.name}\n"
+            #                f"ID в базе: {elem.id}\n"
+            #                f"Статус в компании: {elem.status}\n\n\n")
+            #
+            # return answer, len(result)
 
     @staticmethod
     async def change_perms_user(data):
