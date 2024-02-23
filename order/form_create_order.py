@@ -1,11 +1,11 @@
 from aiogram import Router
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from OrderActionsBase import OrderService
 from service import Service
 from states.states import FormOrder
-from users.actions_users import process_list_user
+
 
 router_order_create = Router()
 
