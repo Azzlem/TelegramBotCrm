@@ -2,11 +2,11 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class FormOrder(StatesGroup):
-    user_id = State()
     client_name = State()
     client_phone = State()
     device = State()
     mulfunction = State()
+    user_id = State()
 
 
 class FormChangePermsUser(StatesGroup):

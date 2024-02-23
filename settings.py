@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     DB_HOST: str
     TOKEN: str
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file='.env')
 
     @property
     def db_url(self):

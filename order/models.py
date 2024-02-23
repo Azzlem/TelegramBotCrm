@@ -1,9 +1,7 @@
 from typing import Annotated
-
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, BigInteger
 from sqlalchemy.orm import mapped_column, Mapped
-
-from service.base import Base
+from base import Base
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 
@@ -12,7 +10,7 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[intpk]
-    tg_user_id: Mapped[str] = mapped_column(unique=True)
+    tg_user_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     name: Mapped[str]
     status: Mapped[int] = mapped_column(default=0)
 

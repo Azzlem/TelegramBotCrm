@@ -1,6 +1,6 @@
 from sqlalchemy import select, update, delete
 from order.models import User, Order
-from service.base import async_session_maker
+from base import async_session_maker
 
 
 class Service:
@@ -20,11 +20,11 @@ class Service:
                 print("Ёпта")
 
     @staticmethod
-    async def del_user(user_id, db_session):
+    async def del_user(user_id):
         async with async_session_maker() as db_session:
             user = await db_session.get(User, user_id)
             if user is not None:
-                await db_session.delete(user)
+                await db_session.execute(delete(User).where(user.id == user_id))
                 await db_session.commit()
                 return True
             return False
@@ -32,7 +32,7 @@ class Service:
     @staticmethod
     async def valid_user(user_id):
         async with async_session_maker() as db_session:
-            user = await db_session.execute(select(User).where(User.tg_user_id == str(user_id)))
+            user = await db_session.execute(select(User).where(User.tg_user_id == user_id))
             a = user.all()
             if not a:
                 return False
@@ -46,7 +46,7 @@ class Service:
     @staticmethod
     async def get_user(tg_user_id):
         async with async_session_maker() as db_session:
-            user = await db_session.execute(select(User).filter(User.tg_user_id == str(tg_user_id)))
+            user = await db_session.execute(select(User).filter(User.tg_user_id == tg_user_id))
             if user.all():
                 return user
             return False
@@ -76,7 +76,7 @@ class Service:
             return orders.all()
 
     @staticmethod
-    async def list_order(user_id):
+    async def list_order(user_id: int):
         data = await Service.get_all_orders(user_id)
         result = []
         for el in data:
@@ -98,12 +98,13 @@ class Service:
                            f"ID в базе: {elem.id}\n"
                            f"Статус в компании: {elem.status}\n\n\n")
 
-            return answer
+            return answer, len(result)
 
     @staticmethod
     async def change_perms_user(data):
         async with async_session_maker() as db_session:
-            await db_session.execute(update(User).where(User.id == int(data['user_id'])).values(status=int(data['status'])))
+            await db_session.execute(
+                update(User).where(User.id == int(data['user_id'])).values(status=int(data['status'])))
             await db_session.commit()
             return True
 
@@ -127,9 +128,4 @@ class Service:
                 mulfunction=data['mulfunction']
             ))
             await db_session.commit()
-
-            print(data)
-
-
-
 

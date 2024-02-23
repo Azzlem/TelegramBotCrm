@@ -5,10 +5,13 @@ from aiogram.fsm.state import default_state
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
 
-from order.actions_order import order_actions
+from order.actions_order import actions_order
+from order.form_change_order import router_order_change
 from order.form_create_order import router_order_create
-from service.settings import settings
+from settings import settings
 from users.actions_users import user_actions
+from users.form_change_perm_user import change_perm_user
+from users.form_del_user import delete_user
 
 TOKEN = settings.TOKEN
 bot = Bot(token=TOKEN)
@@ -63,7 +66,10 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 
 dp.include_router(router_order_create)
 dp.include_router(user_actions)
-dp.include_router(order_actions)
+dp.include_router(router_order_change)
+dp.include_router(change_perm_user)
+dp.include_router(delete_user)
+dp.include_router(actions_order)
 
 if __name__ == '__main__':
     dp.run_polling(bot)
