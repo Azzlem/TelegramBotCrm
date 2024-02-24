@@ -1,12 +1,3 @@
-import asyncio
-
-from sqlalchemy import select
-
-from base import async_session_maker
-from order.models import Order
-from service import Service
-
-
 async def format_data_order_get(data: list):
     answer = ''
     for order in data:
@@ -15,4 +6,22 @@ async def format_data_order_get(data: list):
                    f'Телефон клиента: {order.client_phone}\n'
                    f'Техника клиента: {order.device}\n'
                    f'Неисправность: {order.mulfunction}\n\n\n\n')
+    return answer
+
+
+async def format_data_user_get(data: list):
+    answer = ''
+
+    for user in data:
+        print(user.status)
+        status = ''
+        if user.status == 0:
+            status = "Не авторизован"
+        if user.status == 1:
+            status = "Инженер"
+        if user.status == 2:
+            status = "Админ"
+        answer += (f'Id user {user.id}\n'
+                   f'User Name: {user.name}\n'
+                   f'Permissions: {status}\n\n')
     return answer

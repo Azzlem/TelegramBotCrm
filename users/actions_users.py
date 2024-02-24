@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from service import Service
-
+from utils_format import format_data_user_get
 
 user_actions = Router()
 
@@ -20,7 +20,8 @@ async def process_register_command(message: Message):
 async def process_list_user(message: Message):
     if await Service.valid_user(message.from_user.id) in ["admin"]:
         answer = await Service.get_all_users()
-        await message.answer(answer)
+        answer_formatting = await format_data_user_get(answer)
+        await message.answer(answer_formatting)
     elif await Service.valid_user(message.from_user.id) in ["user"]:
         await message.answer("А тебе это нахуя?")
     else:
