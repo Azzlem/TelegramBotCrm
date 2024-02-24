@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from base import Base
+from order.models import User, Order
 from settings import settings
 
 # this is the Alembic Config object, which provides

@@ -18,7 +18,7 @@ class User(Base):
 class Order(Base):
     __tablename__ = 'order'
     id: Mapped[intpk]
-    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='SET NULL'), nullable=True)
     client_name: Mapped[str]
     client_phone: Mapped[str]
     device: Mapped[str]

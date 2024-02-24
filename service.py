@@ -9,7 +9,7 @@ class Service:
         async with async_session_maker() as db_session:
             try:
                 data = {
-                    'tg_user_id': str(tg_user_id),
+                    'tg_user_id': tg_user_id,
                     'name': tg_username
                 }
                 user = User(**data)
@@ -111,6 +111,7 @@ class Service:
 
     @staticmethod
     async def delete_user(res):
+        print(res)
         async with async_session_maker() as db_session:
             await db_session.execute(delete(User).where(User.id == res['user_id']))
             await db_session.commit()

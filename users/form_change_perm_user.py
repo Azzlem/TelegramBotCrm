@@ -5,6 +5,7 @@ from aiogram.types import Message
 
 from service import Service
 from states.states import FormChangePermsUser
+from utils_format import format_data_user_get
 
 change_perm_user = Router()
 
@@ -13,6 +14,7 @@ change_perm_user = Router()
 async def process_change_perms(message: Message, state: FSMContext) -> None:
     if await Service.valid_user(message.from_user.id) in ["admin"]:
         answer = await Service.get_all_users()
+        answer = await format_data_user_get(answer)
         await state.set_state(FormChangePermsUser.user_id)
         await message.answer(answer)
         await message.answer(
