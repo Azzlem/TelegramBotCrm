@@ -26,3 +26,11 @@ async def format_data_user_get(data: list):
                    f'User Name: {user.name}\n'
                    f'Permissions: {status}\n\n')
     return answer
+
+
+async def format_data_user_set(data) -> dict:
+    data = {
+        'tg_user_id': data.id,
+        'name': data.username
+    }
+    return data

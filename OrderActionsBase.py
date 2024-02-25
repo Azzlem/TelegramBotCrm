@@ -62,11 +62,3 @@ class OrderService:
         else:
             return False
 
-# asyncio.run(OrderService.update_order({
-#     "order_id": 4,
-#     'mulfunction': 'broken keyboard only'
-# }))
-# print(perm_admin(5555))
-# asyncio.run(OrderService.get_order(5555))
-# asyncio.run(OrderService.delete_order(4,647457914))
-

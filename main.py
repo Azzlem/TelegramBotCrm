@@ -4,7 +4,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
-
 from order.actions_order import actions_order
 from order.form_change_order import router_order_change
 from order.form_create_order import router_order_create
@@ -25,7 +24,7 @@ async def process_help(message: Message):
         f"Это бот база\n"
         f"Команды в боте:\n\n"
         f"Блок USER:\n"
-        f"/registr - регистрация(делается 1 раз привязывет ваш ид телеги\n"
+        f"/reg - регистрация(делается 1 раз привязывет ваш ид телеги\n"
         f"/cancel - выход из диалога с ботом\n"
         f"/list_user - простомотр зарегистрированных пользователей(доступно только админу)\n"
         f"/change_perms - изменить права доступа(доступно только админу)\n"

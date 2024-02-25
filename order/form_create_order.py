@@ -1,10 +1,9 @@
 from aiogram import Router, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from OrderActionsBase import OrderService
-from keyboards import keyboard_create_order_user
-from service import Service
+from keybords.keyboards import keyboard_create_order_user
 from states.states import FormOrder
 
 router_order_create = Router()

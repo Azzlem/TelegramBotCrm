@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from service import Service
+from service_base_actions import ServiceBaseActions
 from states.states import FormDeleteUser
 from utils_format import format_data_user_get
 
@@ -13,7 +14,7 @@ delete_user = Router()
 @delete_user.message(Command(commands=["del_user"]))
 async def delete_user_from_id(message: Message, state: FSMContext):
     if await Service.valid_user(message.from_user.id) in ["admin"]:
-        answer = await Service.get_all_users()
+        answer = await ServiceBaseActions.get_all_users()
         answer = await format_data_user_get(answer)
         await state.set_state(FormDeleteUser.user_id)
         await message.answer(answer)
@@ -29,7 +30,7 @@ async def delete_user_final(message: Message, state: FSMContext):
     await state.update_data(user_id=int(message.text))
     data = await state.get_data()
     try:
-        await Service.delete_user(data)
+        await ServiceBaseActions.delete_user(data)
         await message.answer(
             f'Юзер {data["user_id"]} удалён!'
         )

@@ -3,9 +3,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from keyboards import keyboard_change_order_orders, keyboard_create_order_user
+from keybords.keyboards import keyboard_change_order_orders, keyboard_create_order_user
 from service import Service
-from utils_format import format_data_order_get
 from states.states import FormOrderChange
 
 router_order_change = Router()

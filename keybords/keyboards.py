@@ -2,6 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from service import Service
+from service_base_actions import ServiceBaseActions
 
 
 async def keyboard_create_order_user() -> InlineKeyboardMarkup:
@@ -9,7 +10,7 @@ async def keyboard_create_order_user() -> InlineKeyboardMarkup:
 
     buttons: list[InlineKeyboardButton] = []
 
-    users = await Service.get_all_users()
+    users = await ServiceBaseActions.get_all_users()
     for user in users:
         buttons.append(InlineKeyboardButton(
             text=f"{user.name}",
