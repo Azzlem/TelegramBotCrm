@@ -118,7 +118,7 @@ class Service:
     @staticmethod
     async def update_order(data):
         async with async_session_maker() as db_session:
-            data_temp = data.pop('id_order')
+            data_temp = data.pop('order_id')
             print(data_temp)
             await db_session.execute(update(Order).where(Order.id == int(data_temp)).values(
                 user_id=int(data['user_id']),

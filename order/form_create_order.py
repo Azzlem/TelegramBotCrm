@@ -74,22 +74,3 @@ async def command_user_id(callback: CallbackQuery, state: FSMContext):
     )
     await state.clear()
 
-#     users = await Service.get_all_users()
-#     print(users[0].name)
-#     male_button = InlineKeyboardButton(
-#         text=users[0].name,
-#         callback_data='male'
-#     )
-
-# @router_order_create.callback_query(StateFilter(FormOrder.fill_gender),
-#                    F.data.in_(['male', 'female', 'undefined_gender']))
-# if message.text.isdigit() and 1 <= int(message.text) <= users[1]:
-#     await state.update_data(user_id=int(message.text))
-#     data = await state.get_data()
-#     await OrderService.create_order(data)
-#     await message.answer(
-#         f"Заявка на ремонт \n{data['client_name']}\nуспешно создана"
-#     )
-#     await state.clear()
-# else:
-#     await message.answer("Вы ввели что то не то, введите верное значение!")
