@@ -1,6 +1,3 @@
-import asyncio
-import json
-
 from sqlalchemy import select, update, delete
 from base import async_session_maker
 from order.models import Order, User

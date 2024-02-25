@@ -1,11 +1,10 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update
 from order.models import User, Order
 from base import async_session_maker
+from service_base_actions import ServiceBaseActions
 
 
 class Service:
-
-
 
     @staticmethod
     async def valid_user(user_id):
@@ -20,8 +19,6 @@ class Service:
             if b == 2:
                 return "admin"
             return False
-
-
 
     @staticmethod
     async def add_order(data):
@@ -38,8 +35,7 @@ class Service:
             order = Order(**date_add)
             db_session.add(order)
             await db_session.commit()
-            # print(order.id)
-            # return order.id
+
 
     @staticmethod
     async def get_all_orders(user_id):
@@ -51,6 +47,15 @@ class Service:
     async def get_all_orders_scalar() -> list:
         async with async_session_maker() as db_session:
             orders = await db_session.execute(select(Order))
+            return orders.scalars().all()
+
+    @staticmethod
+    async def get_all_orders_user(data) -> list:
+        async with async_session_maker() as db_session:
+            print(data)
+            user = await ServiceBaseActions.get_user(data.id)
+            print(user)
+            orders = await db_session.execute(select(Order).filter_by(user_id=user.id))
             return orders.scalars().all()
 
     @staticmethod

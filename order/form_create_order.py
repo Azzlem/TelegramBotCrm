@@ -3,7 +3,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from OrderActionsBase import OrderService
-from keybords.keyboards import keyboard_create_order_user
+from keybords.keyboards import keyboard_create_orders_user, keyboard_create_orders_users
+from service import Service
 from states.states import FormOrder
 
 router_order_create = Router()
@@ -11,15 +12,22 @@ router_order_create = Router()
 
 @router_order_create.message(Command('order'))
 async def command_order(message: Message, state: FSMContext):
-    await state.set_state(FormOrder.client_name)
-    await message.answer(
-        f"Введи имя клиента"
-    )
+    if await Service.valid_user(message.from_user.id) in ['admin', 'user']:
+        await state.set_state(FormOrder.client_name)
+        await message.answer(
+            f"Введи имя клиента"
+        )
+    else:
+        await message.answer("У вас нет на это прав!")
+        await state.clear()
 
 
 @router_order_create.message(FormOrder.client_name)
 async def command_client_name(message: Message, state: FSMContext):
-    if message.text.isalpha():
+    row = []
+    for el in message.text.split():
+        row.append(el.isalpha())
+    if not False in row:
         await state.update_data(client_name=message.text)
         await state.set_state(FormOrder.client_phone)
         await message.answer(
@@ -53,7 +61,10 @@ async def command_device(message: Message, state: FSMContext):
 @router_order_create.message(FormOrder.mulfunction)
 async def command_mulfunction(message: Message, state: FSMContext):
     await state.update_data(mulfunction=message.text)
-    keyboard = await keyboard_create_order_user()
+    if await Service.valid_user(message.from_user.id) in ["admin"]:
+        keyboard = await keyboard_create_orders_users()
+    else:
+        keyboard = await keyboard_create_orders_user(message.from_user)
     await message.answer(
         text='Выберите инженера!',
         reply_markup=keyboard

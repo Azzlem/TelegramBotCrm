@@ -3,7 +3,8 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from keybords.keyboards import keyboard_change_order_orders, keyboard_create_order_user
+from keybords.keyboards import keyboard_change_order_orders, keyboard_create_orders_user, keyboard_create_orders_users, \
+    keyboard_change_orders_orders
 from service import Service
 from states.states import FormOrderChange
 
@@ -13,7 +14,10 @@ router_order_change = Router()
 @router_order_change.message(Command(commands=['change_order']))
 async def change_order(message: Message, state: FSMContext):
     if await Service.valid_user(message.from_user.id) in ['admin', 'user']:
-        keyboard = await keyboard_change_order_orders()
+        if await Service.valid_user(message.from_user.id) in ["admin"]:
+            keyboard = await keyboard_change_orders_orders()
+        else:
+            keyboard = await keyboard_change_order_orders(message.from_user)
         await message.answer(
             text="Введите номер заказа",
             reply_markup=keyboard
@@ -27,10 +31,14 @@ async def change_order(message: Message, state: FSMContext):
 @router_order_change.callback_query(StateFilter(FormOrderChange.order_id),
                                     F.data.in_([str(el) for el in range(1500)]))
 async def change_order_callback_query(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(order_id=int(callback.data))
+    await state.update_data(order_id=callback.data)
+    print("точка")
     await callback.message.delete()
-    keyboard = await keyboard_create_order_user()
-    print(keyboard)
+    if await Service.valid_user(callback.from_user.id) in ["admin"]:
+        keyboard = await keyboard_create_orders_users()
+    else:
+        keyboard = await keyboard_create_orders_user(callback.from_user.id)
+    print("вторая точка")
     await callback.message.answer(
         text='Выберите инженера!',
         reply_markup=keyboard
@@ -70,20 +78,29 @@ async def change_order_callback_user_query(callback: CallbackQuery, state: FSMCo
 #
 @router_order_change.message(FormOrderChange.client_name)
 async def change_client_name(message: Message, state: FSMContext):
-    await state.update_data(client_name=message.text)
-    await state.set_state(FormOrderChange.client_phone)
-    await message.answer(
-        f"Введи новый телефон клиента"
-    )
+    row = []
+    for el in message.text.split():
+        row.append(el.isalpha())
+    if not False in row:
+        await state.update_data(client_name=message.text)
+        await state.set_state(FormOrderChange.client_phone)
+        await message.answer(
+            f"Введи телефон клиента"
+        )
+    else:
+        await message.answer("Это не похоже на имя, введи имя не еби мозги!")
 
 
 @router_order_change.message(FormOrderChange.client_phone)
 async def change_client_phone(message: Message, state: FSMContext):
-    await state.update_data(client_phone=message.text)
-    await state.set_state(FormOrderChange.device)
-    await message.answer(
-        f"Введи вендор и модель техники."
-    )
+    if len(message.text) == 11 or len(message.text) == 7:
+        await state.update_data(client_phone=message.text)
+        await state.set_state(FormOrderChange.device)
+        await message.answer(
+            f"Введи вендор и модель техники."
+        )
+    else:
+        await message.answer("Ты правда думаешь что если на отъебись заполнять форму то ты станешь миллионером?")
 
 
 @router_order_change.message(FormOrderChange.device)
