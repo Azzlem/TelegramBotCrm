@@ -76,6 +76,13 @@ class Service:
             return orders.all()
 
     @staticmethod
+    async def get_all_orders_scalar() -> list:
+        async with async_session_maker() as db_session:
+            orders = await db_session.execute(select(Order))
+            return orders.scalars().all()
+
+
+    @staticmethod
     async def list_order(user_id: int):
         data = await Service.get_all_orders(user_id)
         result = []
@@ -90,16 +97,7 @@ class Service:
             users = await db_session.execute(select(User))
             users = users.scalars().all()
             return users
-            # result = []
-            # for el in users:
-            #     result.append(el[0])
-            # answer = ''
-            # for elem in result:
-            #     answer += (f"Имя пользователя: @{elem.name}\n"
-            #                f"ID в базе: {elem.id}\n"
-            #                f"Статус в компании: {elem.status}\n\n\n")
-            #
-            # return answer, len(result)
+
 
     @staticmethod
     async def change_perms_user(data):

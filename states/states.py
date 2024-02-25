@@ -19,9 +19,10 @@ class FormDeleteUser(StatesGroup):
 
 
 class FormOrderChange(StatesGroup):
-    id_order = State()
-    user_id = State()
+    order_id = State()
     client_name = State()
     client_phone = State()
     device = State()
     mulfunction = State()
+    user_id = State()
+

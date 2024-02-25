@@ -15,7 +15,6 @@ async def format_data_user_get(data: list):
     answer = ''
 
     for user in data:
-        print(user.status)
         status = ''
         if user.status == 0:
             status = "Не авторизован"

@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
+from keyboards import keyboard_change_order_orders
 from service import Service
 from utils_format import format_data_order_get
 from states.states import FormOrderChange
@@ -13,18 +14,18 @@ router_order_change = Router()
 @router_order_change.message(Command(commands=['change_order']))
 async def change_order(message: Message, state: FSMContext):
     if await Service.valid_user(message.from_user.id) in ['admin', 'user']:
-        data = await format_data_order_get(message.from_user.id)
-        await message.answer(data)
-        await state.set_state(FormOrderChange.id_order)
+        keyboard = await keyboard_change_order_orders()
+        await state.set_state(FormOrderChange.order_id)
         await message.answer(
-            f"Введите номер заказа"
+            text="Введите номер заказа",
+            reply_markup=keyboard
         )
     else:
         await message.answer("У вас нет на это прав!")
         await state.clear()
 
 
-@router_order_change.message(FormOrderChange.id_order)
+@router_order_change.message(FormOrderChange.order_id)
 async def change_order_id(message: Message, state: FSMContext):
     await state.update_data(id_order=message.text)
     await state.set_state(FormOrderChange.user_id)

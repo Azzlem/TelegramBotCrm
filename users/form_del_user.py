@@ -28,11 +28,8 @@ async def delete_user_from_id(message: Message, state: FSMContext):
 async def delete_user_final(message: Message, state: FSMContext):
     await state.update_data(user_id=int(message.text))
     data = await state.get_data()
-    await Service.delete_user(data)
     try:
-        print('try to delete user')
-        # await Service.delete_user(data)
-        print('user deleted')
+        await Service.delete_user(data)
         await message.answer(
             f'Юзер {data["user_id"]} удалён!'
         )
