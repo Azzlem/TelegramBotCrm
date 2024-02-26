@@ -5,7 +5,7 @@ from aiogram.fsm.state import default_state
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message, BotCommand
 
-from UserActionsBase import UserService
+from service_base_actions import ServiceBaseActions
 from settings import settings
 from handlers import (base_handlers, user_handlers,
                       form_del_user, form_change_perm_user, order_handlers, form_change_order, form_create_order)
@@ -18,7 +18,7 @@ storage = MemoryStorage()
 
 @dp.message(CommandStart())
 async def main_menu(message: Message):
-    if await UserService.valid_user(message.from_user.id) in ["admin"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin"]:
         print("admin")
         main_menu_commands = [
             BotCommand(command='help', description='Справка'),
@@ -33,7 +33,7 @@ async def main_menu(message: Message):
         ]
         await bot.set_my_commands(main_menu_commands)
 
-    elif await UserService.valid_user(message.from_user.id) in ["user"]:
+    elif await ServiceBaseActions.valid_user(message.from_user.id) in ["user"]:
         print("not admin")
         main_menu_commands = [
             BotCommand(command='help', description='Справка'),
@@ -55,7 +55,7 @@ async def main_menu(message: Message):
 
 @dp.message(Command(commands='cancel'), ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
-    if await UserService.valid_user(message.from_user.id) in ["admin", "user"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
         await message.answer(
             text='Вы вышли из машины состояний\n\n'
                  'Чтобы перейти к заполнению заказа - \n'

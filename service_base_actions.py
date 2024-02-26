@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from base import async_session_maker
 from order.models import User
-from utils_format import format_data_user_set
+from utils_format import format_data_user_set, format_valid_user
 
 
 class ServiceBaseActions:
@@ -37,7 +37,14 @@ class ServiceBaseActions:
     @classmethod
     async def change_perms_user(cls, data):
         await cls.db.execute(update(User).where(User.id == int(data['user_id'])).values(status=int(data['status'])))
-        await cls.db.commit()
         return True
+
+    @classmethod
+    async def valid_user(cls, data):
+        user = await cls.db.execute(select(User).where(User.tg_user_id == data))
+        user = user.scalars().all()
+        answer = await format_valid_user(user)
+        return answer
+
 
 

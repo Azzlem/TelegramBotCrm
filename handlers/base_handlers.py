@@ -3,14 +3,14 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
-from UserActionsBase import UserService
+from service_base_actions import ServiceBaseActions
 
 router = Router()
 
 
 @router.message(Command(commands='help'))
 async def process_help(message: Message):
-    if await UserService.valid_user(message.from_user.id) in ["admin", "user"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
         await message.answer(
             f"Это бот база\n"
             f"Команды в боте:\n\n"
@@ -33,7 +33,7 @@ async def process_help(message: Message):
 
 @router.message(Command(commands='cancel'), StateFilter(default_state))
 async def process_cancel_command(message: Message):
-    if await UserService.valid_user(message.from_user.id) in ["admin", "user"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
         await message.answer(
             text='Отменять нечего. Вы вне машины состояний\n\n'
                  'Чтобы перейти к заполнению заказа - \n'

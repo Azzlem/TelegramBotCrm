@@ -32,10 +32,21 @@ async def format_data_user_get(data: list):
 
 
 async def format_data_user_set(data) -> dict:
-
     data = {
         'tg_user_id': data.id,
         'name': data.username
     }
 
     return data
+
+
+async def format_valid_user(data: list):
+    if not data:
+        return False
+    for user in data:
+        if user.status == 1:
+            return "user"
+        elif user.status == 2:
+            return "admin"
+        else:
+            return False

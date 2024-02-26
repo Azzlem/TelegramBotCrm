@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from UserActionsBase import UserService
+
 from service_base_actions import ServiceBaseActions
 from states.states import FormChangePermsUser
 from utils_format import format_data_user_get
@@ -13,7 +13,7 @@ router = Router()
 
 @router.message(Command(commands=["change_perms"]))
 async def process_change_perms(message: Message, state: FSMContext) -> None:
-    if await UserService.valid_user(message.from_user.id) in ["admin"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin"]:
         answer = await ServiceBaseActions.get_all_users()
         answer = await format_data_user_get(answer)
         await state.set_state(FormChangePermsUser.user_id)

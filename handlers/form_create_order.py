@@ -3,8 +3,9 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from OrderActionsBase import OrderService
-from UserActionsBase import UserService
+
 from keybords.keyboards import keyboard_create_orders_user, keyboard_create_orders_users
+from service_base_actions import ServiceBaseActions
 
 from states.states import FormOrder
 
@@ -13,7 +14,7 @@ router = Router()
 
 @router.message(Command('order'))
 async def command_order(message: Message, state: FSMContext):
-    if await UserService.valid_user(message.from_user.id) in ['admin', 'user']:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ['admin', 'user']:
         await state.set_state(FormOrder.client_name)
         await message.answer(
             f"Введи имя клиента"
@@ -62,7 +63,7 @@ async def command_device(message: Message, state: FSMContext):
 @router.message(FormOrder.mulfunction)
 async def command_mulfunction(message: Message, state: FSMContext):
     await state.update_data(mulfunction=message.text)
-    if await UserService.valid_user(message.from_user.id) in ["admin"]:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin"]:
         keyboard = await keyboard_create_orders_users()
     else:
         keyboard = await keyboard_create_orders_user(message.from_user)

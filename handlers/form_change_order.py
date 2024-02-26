@@ -4,8 +4,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from OrderActionsBase import OrderService
-from UserActionsBase import UserService
 from keybords.keyboards import keyboard_create_orders_user, keyboard_create_orders_users, keyboard_change_order
+from service_base_actions import ServiceBaseActions
 from states.states import FormOrderChange
 
 router = Router()
@@ -13,7 +13,7 @@ router = Router()
 
 @router.message(Command(commands=['change_order']))
 async def change_order(message: Message, state: FSMContext):
-    if await UserService.valid_user(message.from_user.id) in ['admin', 'user']:
+    if await ServiceBaseActions.valid_user(message.from_user.id) in ['admin', 'user']:
         keyboard = await keyboard_change_order(message.from_user)
         await message.answer(
             text="Введите номер заказа",
@@ -31,7 +31,7 @@ async def change_order_callback_query(callback: CallbackQuery, state: FSMContext
     await state.update_data(order_id=callback.data)
     print("точка")
     await callback.message.delete()
-    if await UserService.valid_user(callback.from_user.id) in ["admin"]:
+    if await ServiceBaseActions.valid_user(callback.from_user.id) in ["admin"]:
         keyboard = await keyboard_create_orders_users()
     else:
         keyboard = await keyboard_create_orders_user(callback.from_user.id)
