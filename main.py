@@ -18,36 +18,19 @@ storage = MemoryStorage()
 
 @dp.message(CommandStart())
 async def main_menu(message: Message):
-    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin"]:
-        print("admin")
-        main_menu_commands = [
-            BotCommand(command='help', description='Справка'),
-            BotCommand(command='cancel', description='Выход'),
-            BotCommand(command='reg', description='Регистрация'),
-            BotCommand(command='list_user', description='Инженеры'),
-            BotCommand(command='change_perms', description='Изменить пользователя!'),
-            BotCommand(command='del_user', description='Удалить пользователя'),
-            BotCommand(command='list_orders', description='Список заказов'),
-            BotCommand(command='order', description='Создать заказ'),
-            BotCommand(command='change_order', description='Изменить заказ'),
-        ]
-        await bot.set_my_commands(main_menu_commands)
+    main_menu_commands = [
+        BotCommand(command='help', description='Справка'),
+        BotCommand(command='cancel', description='Выход'),
+        BotCommand(command='reg', description='Регистрация'),
+        BotCommand(command='list_user', description='Инженеры'),
+        BotCommand(command='change_perms', description='Изменить пользователя!'),
+        BotCommand(command='del_user', description='Удалить пользователя'),
+        BotCommand(command='list_orders', description='Список заказов'),
+        BotCommand(command='order', description='Создать заказ'),
+        BotCommand(command='change_order', description='Изменить заказ'),
+    ]
+    await bot.set_my_commands(main_menu_commands)
 
-    elif await ServiceBaseActions.valid_user(message.from_user.id) in ["user"]:
-        print("not admin")
-        main_menu_commands = [
-            BotCommand(command='help', description='Справка'),
-            BotCommand(command='reg', description='Регистрация'),
-            BotCommand(command='list_orders', description='Список заказов'),
-            BotCommand(command='order', description='Создать заказ'),
-            BotCommand(command='change_order', description='Изменить заказ')
-        ]
-        await bot.set_my_commands(main_menu_commands)
-    else:
-        main_menu_commands = [
-            BotCommand(command='reg', description='Регистрация'),
-        ]
-        await bot.set_my_commands(main_menu_commands)
     await message.answer(
         "Ну здарова"
     )
