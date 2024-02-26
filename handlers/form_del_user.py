@@ -3,17 +3,17 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from service import Service
+from UserActionsBase import UserService
 from service_base_actions import ServiceBaseActions
 from states.states import FormDeleteUser
 from utils_format import format_data_user_get
 
-delete_user = Router()
+router = Router()
 
 
-@delete_user.message(Command(commands=["del_user"]))
+@router.message(Command(commands=["del_user"]))
 async def delete_user_from_id(message: Message, state: FSMContext):
-    if await Service.valid_user(message.from_user.id) in ["admin"]:
+    if await UserService.valid_user(message.from_user.id) in ["admin"]:
         answer = await ServiceBaseActions.get_all_users()
         answer = await format_data_user_get(answer)
         await state.set_state(FormDeleteUser.user_id)
@@ -25,7 +25,7 @@ async def delete_user_from_id(message: Message, state: FSMContext):
         await message.answer("У вас нет на это прав!")
 
 
-@delete_user.message(FormDeleteUser.user_id)
+@router.message(FormDeleteUser.user_id)
 async def delete_user_final(message: Message, state: FSMContext):
     await state.update_data(user_id=int(message.text))
     data = await state.get_data()

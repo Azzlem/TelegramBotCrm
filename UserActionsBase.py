@@ -1,7 +1,4 @@
-import asyncio
-
-from sqlalchemy import delete, update
-
+from sqlalchemy import delete, update, select
 import permissions
 from base import async_session_maker
 from order.models import User
@@ -49,3 +46,17 @@ class UserService:
             except:
                 print("An error occurred while")
                 return False
+
+    @classmethod
+    async def valid_user(cls, user_id):
+        async with async_session_maker() as db_session:
+            user = await db_session.execute(select(cls.model).where(cls.model.tg_user_id == user_id))
+            a = user.all()
+            if not a:
+                return False
+            b = a[0][0].status
+            if b == 1:
+                return "user"
+            if b == 2:
+                return "admin"
+            return False

@@ -3,16 +3,17 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from OrderActionsBase import OrderService
+from UserActionsBase import UserService
 from keybords.keyboards import keyboard_create_orders_user, keyboard_create_orders_users
-from service import Service
+
 from states.states import FormOrder
 
-router_order_create = Router()
+router = Router()
 
 
-@router_order_create.message(Command('order'))
+@router.message(Command('order'))
 async def command_order(message: Message, state: FSMContext):
-    if await Service.valid_user(message.from_user.id) in ['admin', 'user']:
+    if await UserService.valid_user(message.from_user.id) in ['admin', 'user']:
         await state.set_state(FormOrder.client_name)
         await message.answer(
             f"Введи имя клиента"
@@ -22,7 +23,7 @@ async def command_order(message: Message, state: FSMContext):
         await state.clear()
 
 
-@router_order_create.message(FormOrder.client_name)
+@router.message(FormOrder.client_name)
 async def command_client_name(message: Message, state: FSMContext):
     row = []
     for el in message.text.split():
@@ -37,7 +38,7 @@ async def command_client_name(message: Message, state: FSMContext):
         await message.answer("Это не похоже на имя, введи имя не еби мозги!")
 
 
-@router_order_create.message(FormOrder.client_phone)
+@router.message(FormOrder.client_phone)
 async def command_client_phone(message: Message, state: FSMContext):
     if len(message.text) == 11 or len(message.text) == 7:
         await state.update_data(client_phone=message.text)
@@ -49,7 +50,7 @@ async def command_client_phone(message: Message, state: FSMContext):
         await message.answer("Ты правда думаешь что если на отъебись заполнять форму то ты станешь миллионером?")
 
 
-@router_order_create.message(FormOrder.device)
+@router.message(FormOrder.device)
 async def command_device(message: Message, state: FSMContext):
     await state.update_data(device=message.text)
     await state.set_state(FormOrder.mulfunction)
@@ -58,10 +59,10 @@ async def command_device(message: Message, state: FSMContext):
     )
 
 
-@router_order_create.message(FormOrder.mulfunction)
+@router.message(FormOrder.mulfunction)
 async def command_mulfunction(message: Message, state: FSMContext):
     await state.update_data(mulfunction=message.text)
-    if await Service.valid_user(message.from_user.id) in ["admin"]:
+    if await UserService.valid_user(message.from_user.id) in ["admin"]:
         keyboard = await keyboard_create_orders_users()
     else:
         keyboard = await keyboard_create_orders_user(message.from_user)
@@ -72,7 +73,7 @@ async def command_mulfunction(message: Message, state: FSMContext):
     await state.set_state(FormOrder.user_id)
 
 
-@router_order_create.callback_query(StateFilter(FormOrder.user_id),
+@router.callback_query(StateFilter(FormOrder.user_id),
                                     F.data.in_([str(el) for el in range(15)]))
 async def command_user_id(callback: CallbackQuery, state: FSMContext):
     await state.update_data(user_id=int(callback.data))

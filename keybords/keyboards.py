@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from service import Service
+from OrderActionsBase import OrderService
 from service_base_actions import ServiceBaseActions
 
 
@@ -39,35 +39,20 @@ async def keyboard_create_orders_users() -> InlineKeyboardMarkup:
     return kb_builder.as_markup()
 
 
-async def keyboard_change_order_orders(data) -> InlineKeyboardMarkup:
+async def keyboard_change_order(data) -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
-
-    orders = await Service.get_all_orders_user(data)
-    print(orders)
-    for order in orders:
-        print(order.id)
-        buttons.append(InlineKeyboardButton(
-            text=f"{order.id} - {order.device} - {order.client_name}",
-            callback_data=f"{order.id}"
-        ))
-
-    kb_builder.row(*buttons, width=3)
-
-    return kb_builder.as_markup()
-
-
-async def keyboard_change_orders_orders() -> InlineKeyboardMarkup:
-    kb_builder = InlineKeyboardBuilder()
-    buttons: list[InlineKeyboardButton] = []
-
-    orders = await Service.get_all_orders_scalar()
+    orders = await OrderService.get_orders(data.id)
     for order in orders:
         buttons.append(InlineKeyboardButton(
             text=f"{order.id} - {order.device} - {order.client_name}",
             callback_data=f"{order.id}"
         ))
-
     kb_builder.row(*buttons, width=3)
 
     return kb_builder.as_markup()
+
+
+
+
+

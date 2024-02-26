@@ -18,7 +18,7 @@ class ServiceBaseActions:
 
     @classmethod
     async def get_user(cls, data):
-        user = await cls.db.execute(select(User).filter_by(tg_user_id=data))
+        user = await cls.db.execute(select(User).filter_by(tg_user_id=data.id))
         if user:
             return user.scalars().first()
         return False

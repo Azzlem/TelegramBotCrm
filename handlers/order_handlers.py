@@ -1,18 +1,18 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
+
 from OrderActionsBase import OrderService
-from service import Service
+from UserActionsBase import UserService
 from utils_format import format_data_order_get
 
-actions_order = Router()
+router = Router()
 
 
-@actions_order.message(Command(commands=["list_orders"]))
+@router.message(Command(commands=["list_orders"]))
 async def process_list_orders(message: Message):
-    if await Service.valid_user(message.from_user.id) in ["admin", "user"]:
+    if await UserService.valid_user(message.from_user.id) in ["admin", "user"]:
         date = await OrderService.get_orders(message.from_user.id)
-        print(date)
         if not date:
             await message.answer(
                 "You have not entered any orders."
