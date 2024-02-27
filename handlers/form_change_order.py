@@ -28,14 +28,13 @@ async def change_order(message: Message, state: FSMContext):
 @router.callback_query(StateFilter(FormOrderChange.order_id),
                        F.data.in_([str(el) for el in range(1500)]))
 async def change_order_callback_query(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(order_id=callback.data)
-    print("точка")
+    await state.update_data(order_id=int(callback.data))
     await callback.message.delete()
     if await ServiceBaseActions.valid_user(callback.from_user.id) in ["admin"]:
         keyboard = await keyboard_create_orders_users()
     else:
         keyboard = await keyboard_create_orders_user(callback.from_user.id)
-    print("вторая точка")
+
     await callback.message.answer(
         text='Выберите инженера!',
         reply_markup=keyboard

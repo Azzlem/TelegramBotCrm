@@ -1,3 +1,9 @@
+import asyncio
+
+from base import async_session_maker
+from order.models import Order
+
+
 async def format_data_order_get(data: list):
     answer = ''
 
@@ -44,9 +50,20 @@ async def format_valid_user(data: list):
     if not data:
         return False
     for user in data:
+        print(user.status)
         if user.status == 1:
             return "user"
         elif user.status == 2:
             return "admin"
         else:
             return False
+
+
+async def get_comments_from_order():
+    async with async_session_maker() as db:
+        order = await db.get(Order, 1)
+        comments = order.comments
+        for el in comments:
+            print(el)
+
+

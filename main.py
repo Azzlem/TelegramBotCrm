@@ -3,7 +3,7 @@ from aiogram.filters import Command, StateFilter, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import Message, BotCommand
+from aiogram.types import Message, BotCommand, BotCommandScopeChat
 
 from service_base_actions import ServiceBaseActions
 from settings import settings
@@ -18,18 +18,41 @@ storage = MemoryStorage()
 
 @dp.message(CommandStart())
 async def main_menu(message: Message):
-    main_menu_commands = [
-        BotCommand(command='help', description='Справка'),
-        BotCommand(command='cancel', description='Выход'),
-        BotCommand(command='reg', description='Регистрация'),
-        BotCommand(command='list_user', description='Инженеры'),
-        BotCommand(command='change_perms', description='Изменить пользователя!'),
-        BotCommand(command='del_user', description='Удалить пользователя'),
-        BotCommand(command='list_orders', description='Список заказов'),
-        BotCommand(command='order', description='Создать заказ'),
-        BotCommand(command='change_order', description='Изменить заказ'),
-    ]
-    await bot.set_my_commands(main_menu_commands)
+    user = await ServiceBaseActions.valid_user(message.from_user.id)
+    print(user)
+    if not user:
+        main_menu_commands = [BotCommand(command='reg', description='Регистрация')]
+        await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
+        await message.answer(
+            "Ну здарова"
+        )
+    elif user == 'admin':
+        main_menu_commands = [
+            BotCommand(command='help', description='Справка'),
+            BotCommand(command='cancel', description='Выход'),
+            BotCommand(command='reg', description='Регистрация'),
+            BotCommand(command='list_user', description='Инженеры'),
+            BotCommand(command='change_perms', description='Изменить пользователя!'),
+            BotCommand(command='del_user', description='Удалить пользователя'),
+            BotCommand(command='list_orders', description='Список заказов'),
+            BotCommand(command='order', description='Создать заказ'),
+            BotCommand(command='change_order', description='Изменить заказ'),
+        ]
+        await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
+        await message.answer(
+            "Ну здарова"
+        )
+    elif user == 'user':
+        print("ык")
+        main_menu_commands = [
+            BotCommand(command='help', description='Справка'),
+            BotCommand(command='cancel', description='Выход'),
+            BotCommand(command='reg', description='Регистрация'),
+            BotCommand(command='list_orders', description='Список заказов'),
+            BotCommand(command='order', description='Создать заказ'),
+            BotCommand(command='change_order', description='Изменить заказ'),
+        ]
+        await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
 
     await message.answer(
         "Ну здарова"
@@ -54,6 +77,14 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
         await message.answer(
             "Обратитесь к Администратору для активации вашего пользователя"
         )
+
+
+@dp.message(Command(commands='test'))
+async def test(message: Message):
+    print(message.chat.id)
+    await message.answer(
+        '~gnf'
+    )
 
 
 dp.include_router(base_handlers.router)
