@@ -59,11 +59,36 @@ async def format_valid_user(data: list):
             return False
 
 
-async def get_comments_from_order():
-    async with async_session_maker() as db:
-        order = await db.get(Order, 1)
-        comments = order.comments
-        for el in comments:
-            print(el)
+async def get_comments_from_user(date):
+    data_dict = {}
+    for order, comment in date:
+        order_id = order.id
+        if order_id not in data_dict:
+            data_dict[order_id] = {
+                'order_id': order_id,
+                'client_name': order.client_name,
+                'comments': []
+            }
 
+        if comment:
+            data_dict[order_id]['comments'].append({
+                'datetime': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'text': comment.text
+            })
+
+    result_string = ""
+    for order_id, order_data in data_dict.items():
+        result_string += f"Заказ номер: {order_id}\n"
+        result_string += f"Имя клиента: {order_data['client_name']}\n"
+        result_string += "Комментарии к заказу:\n"
+
+        if order_data['comments']:
+            for idx, comment in enumerate(order_data['comments'], start=1):
+                result_string += f"{idx}. время: {comment['datetime']}\n    text:\n {comment['text']}\n"
+        else:
+            result_string += "Отсутствуют комментарии\n"
+
+        result_string += "\n"
+
+    return result_string
 

@@ -1,8 +1,11 @@
+from abc import ABC
+
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import aliased
 
 from base import async_session_maker
-from order.models import User
+from order.models import User, Comment, Order
 from utils_format import format_data_user_set, format_valid_user
 
 
@@ -51,3 +54,21 @@ class ServiceBaseActions:
             user = user.scalars().all()
             answer = await format_valid_user(user)
             return answer
+
+
+class ServiceBaseActionsOrder:
+
+    @classmethod
+    async def get_comments(cls, data):
+        async with async_session_maker() as db:
+            order_alias = aliased(Order)
+            comment_alias = aliased(Comment)
+
+            # Выполняем запрос с использованием join для объединения таблиц
+            result = await db.execute(select(order_alias, comment_alias).outerjoin(
+                    comment_alias,
+                    order_alias.id == comment_alias.order_id
+                ))
+            result = result.all()
+
+            return result
