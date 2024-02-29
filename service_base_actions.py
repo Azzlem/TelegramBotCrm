@@ -59,16 +59,11 @@ class ServiceBaseActions:
 class ServiceBaseActionsOrder:
 
     @classmethod
-    async def get_comments(cls, data):
+    async def order(cls, order_id):
         async with async_session_maker() as db:
-            order_alias = aliased(Order)
-            comment_alias = aliased(Comment)
+            order = await db.execute(select(Order).filter_by(id=order_id['order_id']))
+            order = order.scalars().first()
+            comments = await db.execute(select(Comment).filter_by(order_id=order.id))
+            comments = comments.scalars().all()
+            return order, comments
 
-            # Выполняем запрос с использованием join для объединения таблиц
-            result = await db.execute(select(order_alias, comment_alias).outerjoin(
-                    comment_alias,
-                    order_alias.id == comment_alias.order_id
-                ))
-            result = result.all()
-
-            return result

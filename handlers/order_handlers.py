@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from OrderActionsBase import OrderService
 from service_base_actions import ServiceBaseActions, ServiceBaseActionsOrder
-from utils_format import format_data_order_get, get_comments_from_user
+from utils_format import format_data_order_get, order_with_comments
 
 router = Router()
 
@@ -28,14 +28,15 @@ async def process_list_orders(message: Message):
         )
 
 
-@router.message(Command(commands=["orders"]))
-async def process_orders(message: Message):
-    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
-        date = await ServiceBaseActionsOrder.get_comments(message.from_user.id)
-        if not date:
-            await message.answer(
-                "You have not entered any orders."
-            )
-        else:
-            date_formatting = await get_comments_from_user(date)
-            await message.answer(date_formatting)
+# @router.message(Command(commands=["get_order"]))
+# async def process_orders(message: Message):
+#     if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
+#         date = await ServiceBaseActionsOrder.order(message.from_user.id)
+#
+#         if not date:
+#             await message.answer(
+#                 "You have not entered any orders."
+#             )
+#         else:
+#             result = await order_with_comments(date)
+#             await message.answer(result)

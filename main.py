@@ -8,7 +8,8 @@ from aiogram.types import Message, BotCommand, BotCommandScopeChat
 from service_base_actions import ServiceBaseActions
 from settings import settings
 from handlers import (base_handlers, user_handlers,
-                      form_del_user, form_change_perm_user, order_handlers, form_change_order, form_create_order)
+                      form_del_user, form_change_perm_user, order_handlers, form_change_order, form_create_order,
+                      form_list_orders)
 
 TOKEN = settings.TOKEN
 bot = Bot(token=TOKEN)
@@ -94,6 +95,7 @@ dp.include_router(form_change_perm_user.router)
 dp.include_router(order_handlers.router)
 dp.include_router(form_change_order.router)
 dp.include_router(form_create_order.router)
+dp.include_router(form_list_orders.router)
 
 if __name__ == '__main__':
     dp.run_polling(bot)

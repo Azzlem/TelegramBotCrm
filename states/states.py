@@ -26,3 +26,7 @@ class FormOrderChange(StatesGroup):
     mulfunction = State()
     user_id = State()
 
+
+class FormListOrders(StatesGroup):
+    order_id = State()
+
