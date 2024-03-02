@@ -7,6 +7,12 @@ from alembic import context
 
 from base import Base
 from order.models import User, Order
+from models.users import Users
+from models.customers import Customers
+from models.orders import Orders
+from models.comments import Comments
+from models.components import Components
+from models.items import Items
 from settings import settings
 
 # this is the Alembic Config object, which provides

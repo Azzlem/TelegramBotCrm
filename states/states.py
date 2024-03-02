@@ -30,3 +30,6 @@ class FormOrderChange(StatesGroup):
 class FormListOrders(StatesGroup):
     order_id = State()
 
+
+class FormDetailOrder(StatesGroup):
+    pass

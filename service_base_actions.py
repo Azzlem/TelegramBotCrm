@@ -1,9 +1,5 @@
-from abc import ABC
-
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import aliased
-
 from base import async_session_maker
 from order.models import User, Comment, Order
 from utils_format import format_data_user_set, format_valid_user

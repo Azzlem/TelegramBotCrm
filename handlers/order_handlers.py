@@ -13,7 +13,6 @@ router = Router()
 async def process_list_orders(message: Message):
     if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
         date = await OrderService.get_orders(message.from_user.id)
-        # comments = await ServiceBaseActionsOrder.get_comments(date)
         if not date:
             await message.answer(
                 "You have not entered any orders."
@@ -27,16 +26,3 @@ async def process_list_orders(message: Message):
             "Обратитесь к Администратору для активации вашего пользователя"
         )
 
-
-# @router.message(Command(commands=["get_order"]))
-# async def process_orders(message: Message):
-#     if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
-#         date = await ServiceBaseActionsOrder.order(message.from_user.id)
-#
-#         if not date:
-#             await message.answer(
-#                 "You have not entered any orders."
-#             )
-#         else:
-#             result = await order_with_comments(date)
-#             await message.answer(result)

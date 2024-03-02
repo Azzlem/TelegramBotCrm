@@ -80,7 +80,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
         )
 
 
-@dp.message(Command(commands='test'))
+@dp.message(Command(commands='pivo'))
 async def test(message: Message):
     print(message.chat.id)
     await message.answer(

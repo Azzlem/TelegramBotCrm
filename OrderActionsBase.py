@@ -35,7 +35,6 @@ class OrderService:
     @classmethod
     async def update_order(cls, data: dict) -> bool:
         async with async_session_maker() as db_session:
-            data_temp = data.pop("order_id")
             try:
                 data_temp = data.pop("order_id")
                 await db_session.execute(update(cls.model).where(cls.model.id == data_temp).values(**data))

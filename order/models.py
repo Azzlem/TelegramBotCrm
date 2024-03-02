@@ -1,9 +1,9 @@
-import asyncio
 from datetime import datetime
 from typing import Annotated
-from sqlalchemy import ForeignKey, BigInteger, Text
+from sqlalchemy import ForeignKey, BigInteger, Text, func
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from base import Base, async_session_maker
+
+from base import Base
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 
@@ -34,8 +34,12 @@ class Order(Base):
     client_phone: Mapped[str]
     device: Mapped[str]
     mulfunction: Mapped[str]
-    comments: Mapped[Comment] = relationship('Comment', backref='customer')
-
+    comments: Mapped[Comment] = relationship('Comment', backref='comments')
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        server_onupdate=func.now(),
+        nullable=True
+    )
 
 # class Customer(Base):
 #     __tablename__ = 'customer'
@@ -47,5 +51,3 @@ class Order(Base):
 #     phone: Mapped[str] = mapped_column(nullable=False)
 #     address: Mapped[str] = mapped_column(nullable=True)
 #     comments: Mapped[Comment] = relationship('Comment', backref='customer')
-
-
