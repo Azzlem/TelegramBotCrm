@@ -11,10 +11,14 @@ class FormOrder(StatesGroup):
 
 class FormChangePermsUser(StatesGroup):
     user_id = State()
-    status = State()
+    role = State()
 
 
 class FormDeleteUser(StatesGroup):
+    user_id = State()
+
+
+class FormDetailUser(StatesGroup):
     user_id = State()
 
 

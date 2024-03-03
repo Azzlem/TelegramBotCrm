@@ -18,3 +18,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+string_cancel = 'Вы вышли из операции изменения\n\nВыберите в меню новый запрос!\n'

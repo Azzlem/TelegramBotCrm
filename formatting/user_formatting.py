@@ -27,3 +27,11 @@ class UserFormatter:
                         )
         return message
 
+
+class DataObject:
+    def __init__(self, data):
+        self._data = data
+
+    @property
+    def id(self):
+        return int(self._data.get("user_id"))
