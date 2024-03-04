@@ -7,7 +7,6 @@ from aiogram.types import Message, BotCommandScopeChat
 
 from actions_base.actions_users import UserActions
 from bot_commands import admin_commands, user_commands, ungerister_user_commands
-from service_base_actions import ServiceBaseActions
 from settings import settings, string_cancel
 from handlers import (base_handlers, user_handlers,
                       fsm_perm_user, fsm_del_user, fsm_list_detail_user)
@@ -35,10 +34,12 @@ async def main_menu(message: Message):
         main_menu_commands = user_commands
         await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
         await message.answer("добро пожаловать , хорошего дня!")
+
     elif user.role.name == 'ADMIN':
         main_menu_commands = admin_commands
         await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
         await message.answer("Здарова Админ! ОпяТь работа?")
+
     elif user.role.name == 'OWNER':
         main_menu_commands = admin_commands
         await bot.set_my_commands(main_menu_commands, BotCommandScopeChat(chat_id=message.from_user.id))
@@ -47,7 +48,8 @@ async def main_menu(message: Message):
 
 @dp.message(Command(commands='cancel'), ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
-    if await ServiceBaseActions.valid_user(message.from_user.id) in ["admin", "user"]:
+    user = await UserActions.get_user(message.from_user)
+    if user.role.name in ['ADMIN', 'OWNER', 'USER']:
         await message.answer(
             text=string_cancel
         )
@@ -63,7 +65,6 @@ dp.include_router(user_handlers.router)
 dp.include_router(fsm_list_detail_user.router)
 dp.include_router(fsm_del_user.router)
 dp.include_router(fsm_perm_user.router)
-
 
 if __name__ == '__main__':
     dp.run_polling(bot)

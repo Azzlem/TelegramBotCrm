@@ -6,7 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import DataObject
 from keybords.keyboards import keyboard_list_user
-from states.states import FormDetailUser
+from states.states_user import FormDetailUser
 
 router = Router()
 

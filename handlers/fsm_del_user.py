@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_list_user
-from states.states import FormDeleteUser
+from states.states_user import FormDeleteUser
 
 router = Router()
 

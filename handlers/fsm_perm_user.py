@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_list_user, keyboard_list_orders
-from states.states import FormChangePermsUser
+from states.states_user import FormChangePermsUser
 
 
 router = Router()
