@@ -1,4 +1,4 @@
-from models.users import Users
+from models.models import Users
 
 
 class UserFormatter:

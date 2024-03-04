@@ -1,8 +1,8 @@
-from sqlalchemy import select, delete, insert, update
-
+from sqlalchemy import select, delete, update
+from sqlalchemy.orm import selectinload
 from base import async_session_maker
 from formatting.user_formatting import UserFormatter
-from models.users import Users, Role
+from models.models import Users
 
 
 class UserActions:
@@ -36,6 +36,13 @@ class UserActions:
     async def get_all_users(cls):
         async with async_session_maker() as db:
             users = await db.execute(select(cls.model))
+            users = users.scalars().all()
+            return users
+
+    @classmethod
+    async def get_all_users_with_count_orders(cls):
+        async with async_session_maker() as db:
+            users = await db.execute(select(cls.model).options(selectinload(cls.model.orders)))
             users = users.scalars().all()
             return users
 

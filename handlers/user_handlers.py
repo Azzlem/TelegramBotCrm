@@ -1,10 +1,9 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import UserFormatter
-from models.users import Role
+
 
 router = Router()
 
@@ -34,3 +33,9 @@ async def process_list_user(message: Message):
         await message.answer(
             text=users
         )
+
+
+@router.message(Command(commands=["list_user_orders"]))
+async def process_list_user(message: Message):
+    users = await UserActions.get_all_users_with_count_orders()
+    print(users[0].orders)

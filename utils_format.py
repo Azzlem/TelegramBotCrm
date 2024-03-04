@@ -1,10 +1,3 @@
-import asyncio
-from datetime import datetime
-
-from base import async_session_maker
-from order.models import Order
-
-
 async def format_data_order_get(data: list):
     answer = ''
 

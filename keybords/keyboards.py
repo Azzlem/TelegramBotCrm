@@ -1,10 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from actions_base.actions_users import UserActions
-from models.users import Role
+from models.models import Role
 
 
-async def keyboard_list_user(data) -> InlineKeyboardMarkup:
+async def keyboard_list_user() -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
     users = await UserActions.get_all_users()

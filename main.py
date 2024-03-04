@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command, StateFilter, CommandStart
 from aiogram.fsm.context import FSMContext
@@ -66,5 +68,11 @@ dp.include_router(fsm_list_detail_user.router)
 dp.include_router(fsm_del_user.router)
 dp.include_router(fsm_perm_user.router)
 
-if __name__ == '__main__':
-    dp.run_polling(bot)
+
+async def main():
+    # await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
