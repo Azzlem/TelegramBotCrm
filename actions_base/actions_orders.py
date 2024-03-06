@@ -18,10 +18,9 @@ class OrdersActions:
     @classmethod
     async def get_orders_with_customer(cls, data):
         async with async_session_maker() as db:
-            orders = await db.execute(select(Orders).where(Orders.user_id == data.id).options(selectinload(cls.model.customer)))
-
+            orders = await db.execute(select(Orders).where(
+                Orders.user_id == data.id
+            ).options(selectinload(cls.model.customer)))
             orders = orders.scalars().all()
-
-
             return orders
 

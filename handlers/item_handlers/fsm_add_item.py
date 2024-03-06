@@ -3,6 +3,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, InlineKeyboardMarkup, CallbackQuery
 
+from actions_base.actions_items import ItemsActions
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_choise_vendor, keyboard_all_order_from_user
 from models.models import Vendor
@@ -68,3 +69,13 @@ async def add_defect(message: Message, state: FSMContext):
         await state.set_state(FormAddItem.order_id)
 
 
+@router.callback_query(StateFilter(FormAddItem.order_id))
+async def add_order_callback(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(order_id=int(callback.data))
+    await callback.message.delete()
+    data = await state.get_data()
+    await ItemsActions.add_item(data)
+    await callback.message.answer(
+        text="Вы добавили технику к заказу."
+    )
+    await state.clear()

@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from actions_base.actions_order import OrdersActions
+from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from models.models import Role, Vendor
 
