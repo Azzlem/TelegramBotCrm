@@ -9,7 +9,7 @@ from aiogram.types import Message, BotCommandScopeChat
 
 from actions_base.actions_users import UserActions
 from bot_commands import admin_commands, user_commands, ungerister_user_commands
-from handlers.customer_handlers import fsm_add_customer
+from handlers.customer_handlers import fsm_add_customer, fsm_edit_customer
 from handlers.item_handlers import fsm_add_item
 from settings import settings, string_cancel
 from handlers import base_handlers
@@ -71,6 +71,7 @@ dp.include_router(fsm_del_user.router)
 dp.include_router(fsm_perm_user.router)
 dp.include_router(fsm_add_customer.router)
 dp.include_router(fsm_add_item.router)
+dp.include_router(fsm_edit_customer.router)
 
 
 async def main():

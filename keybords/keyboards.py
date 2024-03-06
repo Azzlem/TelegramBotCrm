@@ -1,9 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
-from models.models import Role, Vendor
+from models.models import Role, Vendor, Customers
 
 
 async def keyboard_list_user() -> InlineKeyboardMarkup:
@@ -67,5 +68,38 @@ async def keyboard_all_order_from_user(data) -> InlineKeyboardMarkup | bool:
         ))
 
     kb_builder.row(*buttons, width=3)
+
+    return kb_builder.as_markup()
+
+
+async def keyboard_choice_customer_edit() -> InlineKeyboardMarkup | bool:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
+
+    customers = await CustomerActions.get_customers()
+    if not customers:
+        return False
+    for customer in customers:
+        buttons.append(
+            InlineKeyboardButton(
+                text=f"{customer.fullname} | {customer.address}"
+                ,
+                callback_data=f"{customer.id}"
+            )
+        )
+
+    kb_builder.row(*buttons, width=2)
+
+    return kb_builder.as_markup()
+
+
+async def keyboard_customer_edit() -> InlineKeyboardMarkup | bool:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(text=f"Имя", callback_data="fullname"),
+                                           InlineKeyboardButton(text=f"Телефон", callback_data="phone"),
+                                           InlineKeyboardButton(text=f"Адресс", callback_data="adress"),
+                                           InlineKeyboardButton(text=f"Почта", callback_data="email")]
+
+    kb_builder.row(*buttons, width=4)
 
     return kb_builder.as_markup()
