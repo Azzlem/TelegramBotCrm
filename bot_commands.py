@@ -6,7 +6,9 @@ admin_commands = main_menu_commands = [
     BotCommand(command='list_user', description='Инженеры'),
     BotCommand(command='change_perms', description='Изменить пользователя!'),
     BotCommand(command='deluser', description='Удалить пользователя'),
-    BotCommand(command='listuser', description='Инженеры')
+    BotCommand(command='listuser', description='Инженеры'),
+    BotCommand(command='customer_add', description='Создать клиента')
+
 ]
 
 user_commands = [

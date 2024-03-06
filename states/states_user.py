@@ -12,4 +12,3 @@ class FormDeleteUser(StatesGroup):
 
 class FormDetailUser(StatesGroup):
     user_id = State()
-

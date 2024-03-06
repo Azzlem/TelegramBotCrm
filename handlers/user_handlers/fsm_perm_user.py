@@ -20,7 +20,7 @@ async def change_perms_user(message: Message, state: FSMContext):
         await state.clear()
     elif user.role.name in ["OWNER", "ADMIN"]:
         users = await UserActions.get_all_users()
-        keyboard = await keyboard_list_user(users)
+        keyboard = await keyboard_list_user()
         await message.answer(
             text=" Выберите пользователя которому хотите изменить права. ",
             reply_markup=keyboard

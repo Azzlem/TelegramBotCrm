@@ -78,13 +78,15 @@ class Orders(Base):
     user: Mapped["Users"] = relationship(back_populates='orders')
     customer: Mapped["Customers"] = relationship(back_populates='orders')
 
+    price: Mapped[float] = mapped_column(BigInteger(), default=0, nullable=False)
+
 
 class Customers(Base):
     __tablename__ = 'customers'
     id: Mapped[int] = mapped_column(primary_key=True)
     fullname: Mapped[str]
     email: Mapped[str] = mapped_column(nullable=True)
-    phone: Mapped[str] = mapped_column(nullable=False)
+    phone: Mapped[int] = mapped_column(BigInteger, nullable=False)
     address: Mapped[str] = mapped_column(nullable=True)
     sales: Mapped[Sale] = mapped_column(default=Sale.VISITOR)
     created_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
@@ -100,7 +102,6 @@ class Items(Base):
     vendor: Mapped[Vendor] = mapped_column(default=Vendor.UNKNOWN)
     model: Mapped[str] = mapped_column(nullable=True)
     defect: Mapped[str] = mapped_column(nullable=False)
-    comment: Mapped[str] = mapped_column(nullable=True)
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=True)
     created_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
     updated_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now, onupdate=datetime.now)

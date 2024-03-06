@@ -9,9 +9,11 @@ from aiogram.types import Message, BotCommandScopeChat
 
 from actions_base.actions_users import UserActions
 from bot_commands import admin_commands, user_commands, ungerister_user_commands
+from handlers.customer_handlers import fsm_add_customer
+from handlers.item_handlers import fsm_add_item
 from settings import settings, string_cancel
-from handlers import (base_handlers, user_handlers,
-                      fsm_perm_user, fsm_del_user, fsm_list_detail_user)
+from handlers import base_handlers
+from handlers.user_handlers import fsm_perm_user, fsm_del_user, fsm_list_detail_user, user_handlers
 
 TOKEN = settings.TOKEN
 bot = Bot(token=TOKEN)
@@ -67,6 +69,8 @@ dp.include_router(user_handlers.router)
 dp.include_router(fsm_list_detail_user.router)
 dp.include_router(fsm_del_user.router)
 dp.include_router(fsm_perm_user.router)
+dp.include_router(fsm_add_customer.router)
+dp.include_router(fsm_add_item.router)
 
 
 async def main():
