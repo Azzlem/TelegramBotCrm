@@ -9,7 +9,8 @@ admin_commands = main_menu_commands = [
     BotCommand(command='listuser', description='Инженеры'),
     BotCommand(command='customer_add', description='Создать клиента'),
     BotCommand(command='customer_edit', description='Изменить клиента'),
-    BotCommand(command='item_add', description='Добавить технику (если у вас есть клиент)')
+    BotCommand(command='item_add', description='Добавить технику (если у вас есть клиент)'),
+    BotCommand(command='order_add', description='Создать заказ')
 
 ]
 
@@ -17,7 +18,9 @@ user_commands = [
     BotCommand(command='cancel', description='Выход'),
     BotCommand(command='reg', description='Регистрация'),
     BotCommand(command='customer_add', description='Создать клиента'),
-    BotCommand(command='item_add', description='Добавить технику (если у вас есть клиент)')
+    BotCommand(command='item_add', description='Добавить технику (если у вас есть клиент)'),
+    BotCommand(command='order_add', description='Создать заказ'),
+    BotCommand(command='list_orders', description='Список заказов')
 
 ]
 ungerister_user_commands = [BotCommand(command='reg', description='Регистрация')]

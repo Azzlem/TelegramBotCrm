@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_list_user, keyboard_list_orders
+from permission import is_owner_admin
 from states.states_user import FormChangePermsUser
 
 
@@ -13,13 +14,7 @@ router = Router()
 @router.message(Command(commands=["change_perms"]))
 async def change_perms_user(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if user.role.name in ["REGISTERED", "USER"]:
-        await message.answer(
-            text="У вас нет прав!"
-        )
-        await state.clear()
-    elif user.role.name in ["OWNER", "ADMIN"]:
-        users = await UserActions.get_all_users()
+    if is_owner_admin(user):
         keyboard = await keyboard_list_user()
         await message.answer(
             text=" Выберите пользователя которому хотите изменить права. ",
@@ -27,9 +22,7 @@ async def change_perms_user(message: Message, state: FSMContext):
         )
         await state.set_state(FormChangePermsUser.user_id)
     else:
-        await message.answer(
-            text="Ты блять кто?"
-        )
+        await message.answer(text="У вас нет на это прав!")
         await state.clear()
 
 

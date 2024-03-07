@@ -6,6 +6,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, CallbackQuery
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_choice_customer_filter, keyboard_list_user, keyboard_list_user_for_order
+from permission import is_registered, is_owner_admin_user
 from states.states_orders import FormAddOrder
 
 router = Router()
@@ -14,14 +15,10 @@ router = Router()
 @router.message(Command(commands=["order_add"]))
 async def add_order(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if not user:
-        await message.answer(text="Вам тут не место")
-    elif user.role.name == "REGISTERED":
+    if await is_registered(user):
         await message.answer(text="Обратитсь к администратору за активацией вашего профиля")
-    elif user.role.name in ["USER", "ADMIN", "OWNER"]:
-        await message.answer(
-            text="Введите фамилию клиента или наименование организации",
-        )
+    elif await is_owner_admin_user(user):
+        await message.answer(text="Введите фамилию клиента или наименование организации")
         await state.set_state(FormAddOrder.fullname)
 
 

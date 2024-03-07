@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import UserFormatter
-
+from permission import is_owner_admin
 
 router = Router()
 
@@ -23,19 +23,11 @@ async def process_register_command(message: Message):
 @router.message(Command(commands=["list_user"]))
 async def process_list_user(message: Message):
     user = await UserActions.get_user(message.from_user)
-    if user.role.name in ["REGISTERED", "USER"]:
-        await message.answer(
-            text="У вас нет прав!"
-        )
-    elif user.role.name in ["ADMIN", "OWNER"]:
+    if is_owner_admin(user):
         users = await UserActions.get_all_users()
         users = await UserFormatter.convert_to_base_list(users)
         await message.answer(
             text=users
         )
-
-
-@router.message(Command(commands=["list_user_orders"]))
-async def process_list_user(message: Message):
-    users = await UserActions.get_all_users_with_count_orders()
-    print(users[0].orders)
+    else:
+        await message.answer(text="У вас нет прав!")

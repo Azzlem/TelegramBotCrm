@@ -7,6 +7,7 @@ from actions_base.actions_items import ItemsActions
 from actions_base.actions_users import UserActions
 from keybords.keyboards import keyboard_choise_vendor, keyboard_all_order_from_user
 from models.models import Vendor
+from permission import is_owner_admin_user
 from states.states_items import FormAddItem
 from states.states_user import FormChangePermsUser
 
@@ -17,18 +18,16 @@ vendor = Vendor
 @router.message(Command(commands=["item_add"]))
 async def add_item(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if not user or user.role.name in ["REGISTERED"]:
-        await message.answer(
-            text="У вас нет прав!"
-        )
-        await state.clear()
-    else:
+    if await is_owner_admin_user(user):
         keyboard = await keyboard_choise_vendor()
         await message.answer(
             text=f'Выберите вендор',
             reply_markup=keyboard
         )
         await state.set_state(FormAddItem.vendor)
+    else:
+        await message.answer(text="У вас нет прав!")
+        await state.clear()
 
 
 @router.callback_query(StateFilter(FormAddItem.vendor),

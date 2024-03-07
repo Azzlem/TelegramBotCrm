@@ -5,6 +5,7 @@ from aiogram.types import Message
 
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_users import UserActions
+from permission import is_owner_admin_user
 from states.states_customer import FormAddCustomer
 
 router = Router()
@@ -13,16 +14,12 @@ router = Router()
 @router.message(Command(commands=["customer_add"]))
 async def add_customer(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if not user or user.role.name in ["REGISTERED"]:
-        await message.answer(
-            text="У вас нет прав!"
-        )
-        await state.clear()
-    else:
-        await message.answer(
-            'Введите Имя и Фамилию клиента. Ну или просто имя.'
-        )
+    if await is_owner_admin_user(user):
+        await message.answer('Введите Имя и Фамилию клиента. Ну или просто имя.')
         await state.set_state(FormAddCustomer.fullname)
+    else:
+        await message.answer(text="У вас нет прав!")
+        await state.clear()
 
 
 @router.message(StateFilter(FormAddCustomer.fullname))

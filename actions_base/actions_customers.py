@@ -10,6 +10,7 @@ class CustomerActions:
     @classmethod
     async def add_customer(cls, data):
         customer = Customers(**data)
+
         async with async_session_maker() as db:
             db.add(customer)
             await db.commit()

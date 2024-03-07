@@ -6,6 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import DataObject
 from keybords.keyboards import keyboard_list_user
+from permission import is_owner_admin
 from states.states_user import FormDetailUser
 
 router = Router()
@@ -14,23 +15,15 @@ router = Router()
 @router.message(Command(commands=["listuser"]))
 async def list_user(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if user.role.name in ["REGISTERED", "USER"]:
-        await message.answer(
-            text="У вас нет прав!"
-        )
-        await state.clear()
-    elif user.role.name in ["OWNER", "ADMIN"]:
-        users = await UserActions.get_all_users()
+    if is_owner_admin(user):
         keyboard = await keyboard_list_user()
         await message.answer(
-            text=" Выберите пользователя. ",
+            text=" Выберите пользователя.",
             reply_markup=keyboard
         )
         await state.set_state(FormDetailUser.user_id)
     else:
-        await message.answer(
-            text="Ты блять кто?"
-        )
+        await message.answer(text="У вас нет на это прав")
         await state.clear()
 
 
