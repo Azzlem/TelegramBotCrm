@@ -19,8 +19,7 @@ async def del_user(message: Message, state: FSMContext):
         )
         await state.clear()
     elif user.role.name in ["OWNER"]:
-        users = await UserActions.get_all_users()
-        keyboard = await keyboard_list_user(users)
+        keyboard = await keyboard_list_user()
         await message.answer(
             text=" Выберите пользователя которого хотите удалить. ",
             reply_markup=keyboard

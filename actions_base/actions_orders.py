@@ -9,6 +9,13 @@ class OrdersActions:
     model = Orders
 
     @classmethod
+    async def add_orders(cls, data):
+        async with async_session_maker() as session:
+            order = Orders(**data)
+            session.add(order)
+            await session.commit()
+
+    @classmethod
     async def get_orders(cls, data):
         async with async_session_maker() as db:
             orders = await db.execute(select(Orders).where(Orders.user_id == data.id))
@@ -23,4 +30,3 @@ class OrdersActions:
             ).options(selectinload(cls.model.customer)))
             orders = orders.scalars().all()
             return orders
-

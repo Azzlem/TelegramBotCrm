@@ -58,7 +58,6 @@ async def keyboard_all_order_from_user(data) -> InlineKeyboardMarkup | bool:
     buttons: list[InlineKeyboardButton] = []
     user = await UserActions.get_user(data)
     orders = await OrdersActions.get_orders_with_customer(user)
-
     if not orders:
         return False
     for order in orders:
@@ -101,5 +100,50 @@ async def keyboard_customer_edit() -> InlineKeyboardMarkup | bool:
                                            InlineKeyboardButton(text=f"Почта", callback_data="email")]
 
     kb_builder.row(*buttons, width=4)
+
+    return kb_builder.as_markup()
+
+
+async def keyboard_choice_customer_filter(data) -> InlineKeyboardMarkup | bool:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
+
+    customers = await CustomerActions.get_customers_for_fullname(data)
+    if not customers:
+        return False
+    for customer in customers:
+        buttons.append(
+            InlineKeyboardButton(
+                text=f"{customer.fullname} | {customer.address}"
+                ,
+                callback_data=f"{customer.id}"
+            )
+        )
+
+    kb_builder.row(*buttons, width=2)
+
+    return kb_builder.as_markup()
+
+
+async def keyboard_list_user_for_order(data) -> InlineKeyboardMarkup | bool:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
+    print(f"data= {data}")
+    user_valid = await UserActions.get_user(data)
+    if not user_valid:
+        buttons.append(InlineKeyboardButton(text="ёпта сука", callback_data="ёпта"))
+    elif user_valid.role.name in ["ADMIN", "OWNER"]:
+        users = await UserActions.get_all_users()
+        for user in users:
+            buttons.append(InlineKeyboardButton(
+                text=f"{user.id} - {user.fullname}",
+                callback_data=f"{user.id}"
+            ))
+    elif user_valid.role.name in ["USER"]:
+        buttons.append(InlineKeyboardButton(text=f"{user_valid.id} - {user_valid.fullname}",
+                                            callback_data=f"{user_valid.id}"))
+    else:
+        buttons.append(InlineKeyboardButton(text="ёпта", callback_data="ёпта"))
+    kb_builder.row(*buttons, width=5)
 
     return kb_builder.as_markup()

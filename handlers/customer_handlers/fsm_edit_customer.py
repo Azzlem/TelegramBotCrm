@@ -36,6 +36,7 @@ async def customer_edit(message: Message, state: FSMContext):
 @router.callback_query(StateFilter(FormUpdateCustomer.id))
 async def customer_edit_choice_id(callback: CallbackQuery, state: FSMContext):
     await state.update_data(customer_id=int(callback.data))
+    await callback.message.delete()
     keyboard = await keyboard_customer_edit()
     await callback.message.answer(
         text="Что будем менять?",
@@ -49,6 +50,7 @@ async def customer_edit_fullname(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="Напишите новое имя клиента"
     )
+    await callback.message.delete()
     await state.set_state(FormUpdateCustomer.fullname)
 
 
@@ -57,6 +59,7 @@ async def customer_edit_fullname(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="Напишите новый телефон клиента"
     )
+    await callback.message.delete()
     await state.set_state(FormUpdateCustomer.phone)
 
 
@@ -65,6 +68,7 @@ async def customer_edit_fullname(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="Напишите новый адресс клиента"
     )
+    await callback.message.delete()
     await state.set_state(FormUpdateCustomer.address)
 
 
@@ -73,6 +77,7 @@ async def customer_edit_fullname(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="Напишите новую почту клиента"
     )
+    await callback.message.delete()
     await state.set_state(FormUpdateCustomer.email)
 
 

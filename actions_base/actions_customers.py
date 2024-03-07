@@ -23,6 +23,14 @@ class CustomerActions:
             return customers
 
     @classmethod
+    async def get_customers_for_fullname(cls, full_name: str):
+        async with async_session_maker() as db:
+            string_search = f'%{full_name}%'
+            customers = await db.execute(select(Customers).filter(Customers.fullname.ilike(string_search)))
+            customers = customers.scalars().all()
+            return customers
+
+    @classmethod
     async def get_customer(cls, data):
         async with async_session_maker() as db:
             customer = await db.execute(select(Customers).where(Customers.id == data['customer_id']))
