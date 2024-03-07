@@ -57,18 +57,29 @@ async def keyboard_all_order_from_user(data) -> InlineKeyboardMarkup | bool:
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
     user = await UserActions.get_user(data)
-    orders = await OrdersActions.get_orders_with_customer(user)
-    if not orders:
-        return False
-    for order in orders:
-        buttons.append(InlineKeyboardButton(
-            text=f"{order.id} - {order.customer.fullname}",
-            callback_data=f"{order.id}"
-        ))
+    if user.role.name in ["ADMIN", "OWNER"]:
+        orders = await OrdersActions.get_all_orders_with_customer()
+        if not orders:
+            return False
+        for order in orders:
+            buttons.append(InlineKeyboardButton(
+                text=f"{order.id} - {order.customer.fullname}",
+                callback_data=f"{order.id}"
+            ))
+    else:
+        orders = await OrdersActions.get_orders_with_customer(user)
+        if not orders:
+            buttons.append(InlineKeyboardButton(text="Что то не то", callback_data="Ikzgf"))
+        for order in orders:
+            buttons.append(InlineKeyboardButton(
+                text=f"{order.id} - {order.customer.fullname}",
+                callback_data=f"{order.id}"
+            ))
 
     kb_builder.row(*buttons, width=3)
 
     return kb_builder.as_markup()
+
 
 
 async def keyboard_choice_customer_edit() -> InlineKeyboardMarkup | bool:
