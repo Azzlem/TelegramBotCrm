@@ -14,7 +14,7 @@ router = Router()
 @router.message(Command(commands=["change_perms"]))
 async def change_perms_user(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if is_owner_admin(user):
+    if await is_owner_admin(user):
         keyboard = await keyboard_list_user()
         await message.answer(
             text=" Выберите пользователя которому хотите изменить права. ",
