@@ -6,7 +6,7 @@ from base import async_session_maker
 
 async def get_user_old():
     async with async_session_maker() as session:
-        users = await session.execute(text('select * from pupsik'))
+        users = await session.execute(text('select * from public.user'))
         users = users.all()
         return users
 
