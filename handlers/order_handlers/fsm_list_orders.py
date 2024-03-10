@@ -19,7 +19,10 @@ async def list_orders(message: Message):
     elif await is_user(user):
         orders = await OrdersActions.get_all_orders_with_all_info_for_id(message.from_user)
         orders = await orders_all(orders)
-        await message.answer(text=orders)
+        if len(orders) == 0:
+            await message.answer(text="У вас нет активных заказов.")
+        else:
+            await message.answer(text=orders)
 
     elif await is_owner_admin(user):
         orders = await OrdersActions.get_all_orders_with_all_info()
