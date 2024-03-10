@@ -2,8 +2,17 @@ from datetime import datetime
 from enum import Enum
 from sqlalchemy import BigInteger, String, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from base import Base
+
+
+class Status(Enum):
+    ACCEPTED = 0
+    APPOINTED = 1
+    IN_WORK = 2
+    DEVICE_IN_SERVICE = 3
+    PAID = 4
+    ISSUED_TO_CUSTOMER = 5
+    CLOSED = 6
 
 
 class Role(Enum):
@@ -79,6 +88,8 @@ class Orders(Base):
     customer: Mapped["Customers"] = relationship(back_populates='orders')
 
     price: Mapped[float] = mapped_column(BigInteger(), default=0, nullable=False)
+    status: Mapped[Status] = mapped_column(default=Status.ACCEPTED, nullable=True)
+
 
 
 class Customers(Base):

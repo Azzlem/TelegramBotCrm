@@ -23,7 +23,7 @@ async def process_register_command(message: Message):
 @router.message(Command(commands=["list_user"]))
 async def process_list_user(message: Message):
     user = await UserActions.get_user(message.from_user)
-    if is_owner_admin(user):
+    if await is_owner_admin(user):
         users = await UserActions.get_all_users()
         users = await UserFormatter.convert_to_base_list(users)
         await message.answer(

@@ -15,7 +15,7 @@ router = Router()
 @router.message(Command(commands=["listuser"]))
 async def list_user(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if is_owner_admin(user):
+    if await is_owner_admin(user):
         keyboard = await keyboard_list_user()
         await message.answer(
             text=" Выберите пользователя.",
@@ -35,7 +35,6 @@ async def detail_user(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     data = DataObject(data=data)
     user = await UserActions.get_user_from_id(data)
-
     await callback.message.answer(
         f"{user.fullname} - {user.role.name}\n"
         f"{user.username} - работает с {user.created_on.strftime('%d-%m-%Y')}\n"

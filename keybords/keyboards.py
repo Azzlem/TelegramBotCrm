@@ -5,6 +5,7 @@ from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from models.models import Role, Vendor, Customers
+from permission import is_owner_admin, is_user, is_registered
 
 
 async def keyboard_list_user() -> InlineKeyboardMarkup:
@@ -13,10 +14,10 @@ async def keyboard_list_user() -> InlineKeyboardMarkup:
     users = await UserActions.get_all_users()
     for user in users:
         buttons.append(InlineKeyboardButton(
-            text=f"{user.id} - {user.fullname}",
+            text=f"{user.fullname}",
             callback_data=f"{user.id}"
         ))
-    kb_builder.row(*buttons, width=5)
+    kb_builder.row(*buttons, width=2)
 
     return kb_builder.as_markup()
 
@@ -33,9 +34,7 @@ async def keyboard_list_orders() -> InlineKeyboardMarkup:
                 text=f"{role.name}",
                 callback_data=f"{role.name}"
             ))
-
     kb_builder.row(*buttons, width=3)
-
     return kb_builder.as_markup()
 
 
@@ -79,7 +78,6 @@ async def keyboard_all_order_from_user(data) -> InlineKeyboardMarkup | bool:
     kb_builder.row(*buttons, width=3)
 
     return kb_builder.as_markup()
-
 
 
 async def keyboard_choice_customer_edit() -> InlineKeyboardMarkup | bool:
@@ -139,22 +137,17 @@ async def keyboard_choice_customer_filter(data) -> InlineKeyboardMarkup | bool:
 async def keyboard_list_user_for_order(data) -> InlineKeyboardMarkup | bool:
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
-    print(f"data= {data}")
     user_valid = await UserActions.get_user(data)
-    if not user_valid:
-        buttons.append(InlineKeyboardButton(text="ёпта сука", callback_data="ёпта"))
-    elif user_valid.role.name in ["ADMIN", "OWNER"]:
+    if await is_owner_admin(user_valid):
         users = await UserActions.get_all_users()
         for user in users:
             buttons.append(InlineKeyboardButton(
-                text=f"{user.id} - {user.fullname}",
+                text=f"{user.fullname}",
                 callback_data=f"{user.id}"
             ))
-    elif user_valid.role.name in ["USER"]:
-        buttons.append(InlineKeyboardButton(text=f"{user_valid.id} - {user_valid.fullname}",
-                                            callback_data=f"{user_valid.id}"))
     else:
-        buttons.append(InlineKeyboardButton(text="ёпта", callback_data="ёпта"))
-    kb_builder.row(*buttons, width=5)
+        buttons.append(InlineKeyboardButton(text=f"{user_valid.fullname}",
+                                            callback_data=f"{user_valid.id}"))
+    kb_builder.row(*buttons, width=2)
 
     return kb_builder.as_markup()
