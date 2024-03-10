@@ -14,7 +14,7 @@ router = Router()
 @router.message(Command(commands=["deluser"]))
 async def del_user(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if is_owner(user):
+    if await is_owner(user):
         keyboard = await keyboard_list_user()
         await message.answer(text=" Выберите пользователя которого хотите удалить. ", reply_markup=keyboard)
         await state.set_state(FormDeleteUser.user_id)
