@@ -96,7 +96,7 @@ async def keyboard_choice_customer_edit() -> InlineKeyboardMarkup | bool:
             )
         )
 
-    kb_builder.row(*buttons, width=2)
+    kb_builder.row(*buttons, width=1)
 
     return kb_builder.as_markup()
 

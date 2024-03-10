@@ -45,3 +45,10 @@ class CustomerActions:
         async with async_session_maker() as db:
             await db.execute(update(Customers).where(Customers.id == customer_id).values(**data))
             await db.commit()
+
+    @classmethod
+    async def get_customer_by_phone(cls, data):
+        async with async_session_maker() as db:
+            customer = await db.execute(select(Customers).where(Customers.phone == data))
+            customer = customer.scalars().first()
+            return customer

@@ -15,7 +15,7 @@ router = Router()
 @router.message(Command(commands="customer_edit"))
 async def customer_edit(message: Message, state: FSMContext):
     user = await UserActions.get_user(message.from_user)
-    if is_owner_admin(user):
+    if await is_owner_admin(user):
         keyboard = await keyboard_choice_customer_edit()
         await message.answer(
             text="Кого меняем?",
@@ -107,12 +107,17 @@ async def customer_edit_fullname_final(message: Message, state: FSMContext):
 
 @router.message(StateFilter(FormUpdateCustomer.phone), F.text.isdigit())
 async def customer_edit_fullname_final(message: Message, state: FSMContext):
-    await state.update_data(phone=int(message.text))
-    data = await state.get_data()
-    await CustomerActions.edit_customer(data)
-    await message.answer(
-        "Новый телефон записано!"
-    )
+    customer = await CustomerActions.get_customer_by_phone(int(message.text))
+    if customer:
+        await message.answer(text=f'Пользователь с таким телефоном уже зарегистрирован под именем {customer.fullname}')
+        await state.clear()
+    else:
+        await state.update_data(phone=int(message.text))
+        data = await state.get_data()
+        await CustomerActions.edit_customer(data)
+        await message.answer(
+            "Новый телефон записано!"
+        )
 
 
 @router.message(StateFilter(FormUpdateCustomer.phone))

@@ -39,11 +39,16 @@ async def add_customer_fullname(message: Message, state: FSMContext):
 
 @router.message(StateFilter(FormAddCustomer.phone), F.text.isdigit())
 async def add_customer_phone(message: Message, state: FSMContext):
-    await state.update_data(phone=int(message.text))
-    await message.answer(
-        "Введите адрес клиента"
-    )
-    await state.set_state(FormAddCustomer.address)
+    customer = await CustomerActions.get_customer_by_phone(int(message.text))
+    if customer:
+        await message.answer(text=f'Пользователь с таким телефоном уже зарегистрирован под именем {customer.fullname}')
+        await state.clear()
+    else:
+        await state.update_data(phone=int(message.text))
+        await message.answer(
+            "Введите адрес клиента"
+        )
+        await state.set_state(FormAddCustomer.address)
 
 
 @router.message(StateFilter(FormAddCustomer.phone))

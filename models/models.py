@@ -6,20 +6,20 @@ from base import Base
 
 
 class Status(Enum):
-    ACCEPTED = 0
-    APPOINTED = 1
-    IN_WORK = 2
-    DEVICE_IN_SERVICE = 3
-    PAID = 4
-    ISSUED_TO_CUSTOMER = 5
-    CLOSED = 6
+    ACCEPTED = 'Принят'
+    APPOINTED = 'Назначен'
+    IN_WORK = 'В работе'
+    DEVICE_IN_SERVICE = 'Техника в СЦ'
+    PAID = 'Оплачено'
+    ISSUED_TO_CUSTOMER = 'Техника выдана клиенту'
+    CLOSED = 'Закрыт'
 
 
 class Role(Enum):
-    ADMIN = 1
-    USER = 2
-    OWNER = 0
-    REGISTERED = 3
+    ADMIN = 'админ'
+    USER = 'инженер'
+    OWNER = 'владелец'
+    REGISTERED = 'зарегистриван'
 
 
 class Sale(Enum):
@@ -31,27 +31,27 @@ class Sale(Enum):
 
 
 class Vendor(Enum):
-    UNKNOWN = 0
-    CANON = 0
-    DELI = 1
-    HP = 2
-    HUAWEI = 3
-    KYOCERA = 4
-    PANTUM = 5
-    RICOH = 6
-    XEROX = 7
-    SHARP = 8
-    BROTHER = 9
-    EPSON = 10
-    DEXP = 11
-    KONICA = 12
-    XIAOMI = 13
-    ALGOTEX = 14
-    SUNICA = 15
-    OKI = 16
-    PANASONIC = 17
-    MITA = 18
-    SECRET_KYOCERA = 19
+    UNKNOWN = "UNKNOWN"
+    CANON = "CANON"
+    DELI = "DELI"
+    HP = "HP"
+    HUAWEI = "HUAWEI"
+    KYOCERA = "KYOCERA"
+    PANTUM = "PANTUM"
+    RICOH = "RICOH"
+    XEROX = "XEROX"
+    SHARP = "SHARP"
+    BROTHER = "BROTHER"
+    EPSON = "EPSON"
+    DEXP = "DEXP"
+    KONICA = "KONICA"
+    XIAOMI = "XIAOMI"
+    ALGOTEX = "ALGOTEX"
+    SUNICA = "SUNICA"
+    OKI = "OKI"
+    PANASONIC = "PANASONIC"
+    MITA = "MITA"
+    SECRET_KYOCERA = "SECRET_KYOCERA"
 
 
 class Users(Base):
@@ -91,13 +91,12 @@ class Orders(Base):
     status: Mapped[Status] = mapped_column(default=Status.ACCEPTED, nullable=True)
 
 
-
 class Customers(Base):
     __tablename__ = 'customers'
     id: Mapped[int] = mapped_column(primary_key=True)
     fullname: Mapped[str]
     email: Mapped[str] = mapped_column(nullable=True)
-    phone: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    phone: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     address: Mapped[str] = mapped_column(nullable=True)
     sales: Mapped[Sale] = mapped_column(default=Sale.VISITOR)
     created_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
