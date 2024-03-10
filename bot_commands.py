@@ -10,7 +10,8 @@ admin_commands = main_menu_commands = [
     BotCommand(command='customer_add', description='Создать клиента'),
     BotCommand(command='customer_edit', description='Изменить клиента'),
     BotCommand(command='item_add', description='Добавить технику (если у вас есть клиент)'),
-    BotCommand(command='order_add', description='Создать заказ')
+    BotCommand(command='order_add', description='Создать заказ'),
+    BotCommand(command='list_orders', description='Список заказов')
 
 ]
 
