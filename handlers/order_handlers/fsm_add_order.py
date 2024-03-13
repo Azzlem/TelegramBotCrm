@@ -73,3 +73,4 @@ async def add_order_price(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="Успешно, поидее...."
     )
+    await state.clear()
