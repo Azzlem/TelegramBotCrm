@@ -1,3 +1,5 @@
+import sys
+
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -7,7 +9,8 @@ from actions_base.actions_users import UserActions
 from formatting.order_formatting import orders_all
 from permission import is_owner_admin, is_user, is_registered
 
-logger.add("file_{time}.log", level="CRITICAL")
+logger.add("file_{time}.log", level="ERROR")
+logger.add("file_{time}.log", level='CRITICAL')
 router = Router()
 
 
