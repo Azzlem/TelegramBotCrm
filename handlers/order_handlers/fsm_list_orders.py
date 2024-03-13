@@ -1,15 +1,17 @@
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-
+from loguru import logger
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from formatting.order_formatting import orders_all
 from permission import is_owner_admin, is_user, is_registered
 
+logger.add("file_{time}.log", level="CRITICAL")
 router = Router()
 
 
+@logger.catch
 @router.message(Command(commands='list_orders'))
 async def list_orders(message: Message):
     user = await UserActions.get_user(message.from_user)
