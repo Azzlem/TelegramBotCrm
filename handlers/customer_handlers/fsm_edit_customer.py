@@ -138,3 +138,4 @@ async def customer_edit_fullname_final(message: Message, state: FSMContext):
     await message.answer(
         "Новое имя записано!"
     )
+    await state.clear()
