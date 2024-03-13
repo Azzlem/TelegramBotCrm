@@ -69,3 +69,4 @@ async def warning_not_address(message: Message, state: FSMContext):
     await message.answer(
         text=f"Клиент {customer.fullname} создан!"
     )
+    await state.clear()
