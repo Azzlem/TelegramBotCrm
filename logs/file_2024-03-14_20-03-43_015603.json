@@ -1,0 +1,357 @@
+2024-03-14 20:03:43.020 | ERROR    | handlers.order_handlers.fsm_create_order:user_id_callback:120 - What?!
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 538, in _prepare_and_execute
+    self._rows = await prepared_stmt.fetch(*parameters)
+    │    │             │             │      └ ('CANON', 'ergtre', 'tretre', 21, datetime.datetime(2024, 3, 14, 20, 3, 43, 11351), datetime.datetime(2024, 3, 14, 20, 3, 43,...
+    │    │             │             └ <function PreparedStatement.fetch at 0x720e1f7127a0>
+    │    │             └ <asyncpg.prepared_stmt.PreparedStatement object at 0x720e1eb7ddf0>
+    │    └ <member '_rows' of 'AsyncAdapt_asyncpg_cursor' objects>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py", line 176, in fetch
+    data = await self.__bind_execute(args, 0, timeout)
+                 │                   │        └ None
+                 │                   └ ('CANON', 'ergtre', 'tretre', 21, datetime.datetime(2024, 3, 14, 20, 3, 43, 11351), datetime.datetime(2024, 3, 14, 20, 3, 43,...
+                 └ <asyncpg.prepared_stmt.PreparedStatement object at 0x720e1eb7ddf0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py", line 241, in __bind_execute
+    data, status, _ = await self.__do_execute(
+                            └ <asyncpg.prepared_stmt.PreparedStatement object at 0x720e1eb7ddf0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py", line 230, in __do_execute
+    return await executor(protocol)
+                 │        └ <asyncpg.protocol.protocol.Protocol object at 0x720e1f7e6af0>
+                 └ <function PreparedStatement.__bind_execute.<locals>.<lambda> at 0x720e1eb3fec0>
+  File "asyncpg/protocol/protocol.pyx", line 207, in bind_execute
+    return await waiter
+
+asyncpg.exceptions.InvalidTextRepresentationError: invalid input value for enum vendor: "CANON"
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1960, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x720e1fffb4c0>
+    │    └ <sqlalchemy.dialects.postgresql.asyncpg.PGDialect_asyncpg object at 0x720e222cd8d0>
+    └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('CANON', 'ergtre', 'tretre', 21, datetime.datetime(2024, 3, 14, 20, 3, 43, 11351), datetime.datetime(2024, 3, 14, 20, 3, 43,...
+    │      │       └ 'INSERT INTO items (vendor, model, defect, order_id, created_on, updated_on) VALUES ($1::vendor, $2::VARCHAR, $3::VARCHAR, $4...
+    │      └ <function AsyncAdapt_asyncpg_cursor.execute at 0x720e1f928540>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 572, in execute
+    self._adapt_connection.await_(
+    │    └ <member '_adapt_connection' of 'AsyncAdapt_asyncpg_cursor' objects>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 127, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           │                     └ <coroutine object AsyncAdapt_asyncpg_cursor._prepare_and_execute at 0x720e1f56e320>
+           └ <_AsyncIoGreenlet object at 0x720e1eb77380 (otid=0x720e2078fe40) dead>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 192, in greenlet_spawn
+    value = await result
+                  └ <coroutine object Transaction.rollback at 0x720e1f5fae90>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 550, in _prepare_and_execute
+    self._handle_exception(error)
+    │    └ <function AsyncAdapt_asyncpg_cursor._handle_exception at 0x720e1f928360>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 501, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+    │    │                                   └ InvalidTextRepresentationError('invalid input value for enum vendor: "CANON"')
+    │    └ <member '_adapt_connection' of 'AsyncAdapt_asyncpg_cursor' objects>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 789, in _handle_exception
+    raise translated_error from error
+          │                     └ InvalidTextRepresentationError('invalid input value for enum vendor: "CANON"')
+          └ Error('<class \'asyncpg.exceptions.InvalidTextRepresentationError\'>: invalid input value for enum vendor: "CANON"')
+
+sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.Error: <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum vendor: "CANON"
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/main.py", line 87, in <module>
+    asyncio.run(main())
+    │       │   └ <function main at 0x720e1f54de40>
+    │       └ <function run at 0x720e23103060>
+    └ <module 'asyncio' from '/usr/lib/python3.11/asyncio/__init__.py'>
+
+  File "/usr/lib/python3.11/asyncio/runners.py", line 188, in run
+    return runner.run(main)
+           │      │   └ <coroutine object main at 0x720e1f7dfc40>
+           │      └ <function Runner.run at 0x720e23103420>
+           └ <asyncio.runners.Runner object at 0x720e1f558890>
+  File "/usr/lib/python3.11/asyncio/runners.py", line 120, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<main() running at /home/azzlem/Proj/crm_bot/main.py:83> wait_for=<Future pending cb=[Task.t...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x720e23100f40>
+           │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x720e1f558890>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 637, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x720e23100ea0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 604, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x720e23102ca0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 1909, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x720e236a1120>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/usr/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,)}
+                     │    │           │    └ Update(update_id=890039329, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x720e1f7ae510>
+                     │    └ <function Dispatcher.feed_update at 0x720e20a479c0>
+                     └ <Dispatcher '0x720e2115de10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x720e20a46200>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x720e1f553e10>
+                     └ <Dispatcher '0x720e2115de10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890039329, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x720e1f558350>, functools.par...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890039329, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x720e1f558410>, <function TelegramEventObserver.tri...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890039329, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ <function TelegramEventObserver.trigger at 0x720e1f587ce0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │             └ Update(update_id=890039329, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ <function CallableObject.call at 0x720e1f587b00>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x720e2115de10'>>, Update(update_id=890039329, mess...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │    │                           │                  └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │    │                           └ 'callback_query'
+                 │    └ <function Router.propagate_event at 0x720e20a46fc0>
+                 └ <Dispatcher '0x720e2115de10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x720e1f586660>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x720e20a46200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x720e1f552090>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x720e20a47060>
+                 └ <Dispatcher '0x720e2115de10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 156, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                     │      │                           │                  └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x720e20a46fc0>
+                     └ <Router '0x720e1f6c5950'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x720e1f586480>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x720e20a46200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x720e1f6c6d50>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x720e20a47060>
+                 └ <Router '0x720e1f6c5950'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                     │        │       └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                     │        └ <function TelegramEventObserver.trigger at 0x720e20a46340>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x720e1f6c6d50>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x720e2115de10'>, 'bots': (<aiogram.client.bot.Bot object at 0x720e1f7ae510>,), 'bot': <aiogram.c...
+                 │             └ CallbackQuery(id='2780810568341561993', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 └ <function CallableObject.call at 0x720e1eb3fb00>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<function user_id_callback at 0x720e1f6b36a0>, CallbackQuery(id='2780810568341561993', from_user=User(id=64...
+
+> File "/home/azzlem/Proj/crm_bot/handlers/order_handlers/fsm_create_order.py", line 117, in user_id_callback
+    item = await ItemsActions.add_item_to_order(data.vendor, data.model, data.defect, order.id)
+                 │            │                 │    │       │    │      │    │       │     └ <sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x720e1f785e40>
+                 │            │                 │    │       │    │      │    │       └ <models.models.Orders object at 0x720e1eb77150>
+                 │            │                 │    │       │    │      │    └ <property object at 0x720e1f793e70>
+                 │            │                 │    │       │    │      └ <formatting.user_formatting.DataObject object at 0x720e1f769e90>
+                 │            │                 │    │       │    └ <property object at 0x720e1f793ce0>
+                 │            │                 │    │       └ <formatting.user_formatting.DataObject object at 0x720e1f769e90>
+                 │            │                 │    └ <property object at 0x720e1f793e20>
+                 │            │                 └ <formatting.user_formatting.DataObject object at 0x720e1f769e90>
+                 │            └ <classmethod(<function ItemsActions.add_item_to_order at 0x720e1f6084a0>)>
+                 └ <class 'actions_base.actions_items.ItemsActions'>
+
+  File "/home/azzlem/Proj/crm_bot/actions_base/actions_items.py", line 22, in add_item_to_order
+    await db.commit()
+          │  └ <function AsyncSession.commit at 0x720e1fa08fe0>
+          └ <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x720e1eb98bd0>
+
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/ext/asyncio/session.py", line 1000, in commit
+    await greenlet_spawn(self.sync_session.commit)
+          │              │    │            └ <function Session.commit at 0x720e1fcc7740>
+          │              │    └ <sqlalchemy.orm.session.Session object at 0x720e1eb8fd90>
+          │              └ <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x720e1eb98bd0>
+          └ <function greenlet_spawn at 0x720e207ee480>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 199, in greenlet_spawn
+    result = context.switch(value)
+             │       │      └ None
+             │       └ <method 'switch' of 'greenlet.greenlet' objects>
+             └ <_AsyncIoGreenlet object at 0x720e1eb77380 (otid=0x720e2078fe40) dead>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1972, in commit
+    trans.commit(_to_root=True)
+    │     └ <function SessionTransaction.commit at 0x720e1fcc6840>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x720e1eb7de50>
+  File "<string>", line 2, in commit
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                │  │      │      └ {'_to_root': True}
+                │  │      └ ()
+                │  └ <sqlalchemy.orm.session.SessionTransaction object at 0x720e1eb7de50>
+                └ <function SessionTransaction.commit at 0x720e1fcc6660>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1257, in commit
+    self._prepare_impl()
+    │    └ <function SessionTransaction._prepare_impl at 0x720e1fcc6520>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x720e1eb7de50>
+  File "<string>", line 2, in _prepare_impl
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                │  │      │      └ {}
+                │  │      └ ()
+                │  └ <sqlalchemy.orm.session.SessionTransaction object at 0x720e1eb7de50>
+                └ <function SessionTransaction._prepare_impl at 0x720e1fcc6480>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1232, in _prepare_impl
+    self.session.flush()
+    │    │       └ <function Session.flush at 0x720e1fcca660>
+    │    └ <sqlalchemy.orm.session.Session object at 0x720e1eb8fd90>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x720e1eb7de50>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4296, in flush
+    self._flush(objects)
+    │    │      └ None
+    │    └ <function Session._flush at 0x720e1fcca840>
+    └ <sqlalchemy.orm.session.Session object at 0x720e1eb8fd90>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4431, in _flush
+    with util.safe_reraise():
+         │    └ <class 'sqlalchemy.util.langhelpers.safe_reraise'>
+         └ <module 'sqlalchemy.util' from '/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/__init__.py'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+          │         │              └ <traceback object at 0x720e1ebb0e40>
+          │         └ <method 'with_traceback' of 'BaseException' objects>
+          └ DBAPIError('(sqlalchemy.dialects.postgresql.asyncpg.Error) <class \'asyncpg.exceptions.InvalidTextRepresentationError\'>: inv...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4392, in _flush
+    flush_context.execute()
+    │             └ <function UOWTransaction.execute at 0x720e1fca31a0>
+    └ <sqlalchemy.orm.unitofwork.UOWTransaction object at 0x720e1f7cb550>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+    │   │       └ <sqlalchemy.orm.unitofwork.UOWTransaction object at 0x720e1f7cb550>
+    │   └ <function SaveUpdateAll.execute at 0x720e1fca3ce0>
+    └ SaveUpdateAll(Mapper[Items(items)])
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    │    │         │               └ <function save_obj at 0x720e1fc99260>
+    │    │         └ <module 'sqlalchemy.orm.persistence' from '/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/persis...
+    │    └ <module 'sqlalchemy.util.preloaded' from '/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/preloa...
+    └ <module 'sqlalchemy.util' from '/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/__init__.py'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    └ <function _emit_insert_statements at 0x720e1fc9a160>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             │          └ <function Connection.execute at 0x720e1ff5fce0>
+             └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1408, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.dml.Insert object at 0x720e1eba5810>>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 513, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x720e1ff64040>
+           └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1630, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x720e1ff64220>
+          └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1839, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x720e1ff642c0>
+           └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1979, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x720e1ff64540>
+    └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2335, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ Error('<class \'asyncpg.exceptions.InvalidTextRepresentationError\'>: invalid input value for enum vendor: "CANON"')
+          │                    │              └ (<class 'sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.Error'>, Error('<class \'asyncpg.exceptions.InvalidT...
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ DBAPIError('(sqlalchemy.dialects.postgresql.asyncpg.Error) <class \'asyncpg.exceptions.InvalidTextRepresentationError\'>: inv...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1960, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x720e1fffb4c0>
+    │    └ <sqlalchemy.dialects.postgresql.asyncpg.PGDialect_asyncpg object at 0x720e222cd8d0>
+    └ <sqlalchemy.engine.base.Connection object at 0x720e1eba5b10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ ('CANON', 'ergtre', 'tretre', 21, datetime.datetime(2024, 3, 14, 20, 3, 43, 11351), datetime.datetime(2024, 3, 14, 20, 3, 43,...
+    │      │       └ 'INSERT INTO items (vendor, model, defect, order_id, created_on, updated_on) VALUES ($1::vendor, $2::VARCHAR, $3::VARCHAR, $4...
+    │      └ <function AsyncAdapt_asyncpg_cursor.execute at 0x720e1f928540>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 572, in execute
+    self._adapt_connection.await_(
+    │    └ <member '_adapt_connection' of 'AsyncAdapt_asyncpg_cursor' objects>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 127, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           │                     └ <coroutine object AsyncAdapt_asyncpg_cursor._prepare_and_execute at 0x720e1f56e320>
+           └ <_AsyncIoGreenlet object at 0x720e1eb77380 (otid=0x720e2078fe40) dead>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py", line 192, in greenlet_spawn
+    value = await result
+                  └ <coroutine object Transaction.rollback at 0x720e1f5fae90>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 550, in _prepare_and_execute
+    self._handle_exception(error)
+    │    └ <function AsyncAdapt_asyncpg_cursor._handle_exception at 0x720e1f928360>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 501, in _handle_exception
+    self._adapt_connection._handle_exception(error)
+    │    │                                   └ InvalidTextRepresentationError('invalid input value for enum vendor: "CANON"')
+    │    └ <member '_adapt_connection' of 'AsyncAdapt_asyncpg_cursor' objects>
+    └ <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x720e1f569840>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py", line 789, in _handle_exception
+    raise translated_error from error
+          │                     └ InvalidTextRepresentationError('invalid input value for enum vendor: "CANON"')
+          └ Error('<class \'asyncpg.exceptions.InvalidTextRepresentationError\'>: invalid input value for enum vendor: "CANON"')
+
+sqlalchemy.exc.DBAPIError: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.InvalidTextRepresentationError'>: invalid input value for enum vendor: "CANON"
+[SQL: INSERT INTO items (vendor, model, defect, order_id, created_on, updated_on) VALUES ($1::vendor, $2::VARCHAR, $3::VARCHAR, $4::INTEGER, $5::TIMESTAMP WITHOUT TIME ZONE, $6::TIMESTAMP WITHOUT TIME ZONE) RETURNING items.id]
+[parameters: ('CANON', 'ergtre', 'tretre', 21, datetime.datetime(2024, 3, 14, 20, 3, 43, 11351), datetime.datetime(2024, 3, 14, 20, 3, 43, 11354))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)

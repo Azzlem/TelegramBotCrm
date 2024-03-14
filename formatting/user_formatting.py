@@ -35,3 +35,37 @@ class DataObject:
     @property
     def id(self):
         return int(self._data.get("user_id"))
+
+    @property
+    def fullname(self):
+        return self._data.get("fullname")
+
+    @property
+    def phone(self):
+        return int(self._data.get("phone"))
+
+    @property
+    def address(self):
+        return self._data.get("address")
+
+    @property
+    def user_id(self):
+        return int(self._data.get("user_id"))
+
+    @property
+    def vendor(self):
+        return self._data.get("vendor")
+
+    @property
+    def model(self):
+        return self._data.get("model")
+
+    @property
+    def defect(self):
+        return self._data.get("defect")
+
+    @property
+    def customer_id(self):
+        if self._data.get("customer_id") is None:
+            return None
+        return int(self._data.get("customer_id"))

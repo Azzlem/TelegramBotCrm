@@ -16,6 +16,14 @@ class OrdersActions:
             await session.commit()
 
     @classmethod
+    async def create_orders(cls, customer_id, user_id):
+        async with async_session_maker() as session:
+            order = Orders(customer_id=customer_id, user_id=user_id)
+            session.add(order)
+            await session.commit()
+            return order
+
+    @classmethod
     async def get_orders(cls, data):
         async with async_session_maker() as db:
             orders = await db.execute(select(Orders).where(Orders.user_id == data.id))

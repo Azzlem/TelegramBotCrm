@@ -1,11 +1,11 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InlineKeyboardMarkup, CallbackQuery
+from aiogram.types import Message, CallbackQuery
 
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
-from keybords.keyboards import keyboard_choice_customer_filter, keyboard_list_user, keyboard_list_user_for_order
+from keybords.keyboards import keyboard_choice_customer_filter, keyboard_list_user_for_order
 from permission import is_registered, is_owner_admin_user
 from states.states_orders import FormAddOrder
 

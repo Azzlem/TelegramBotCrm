@@ -1,11 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
-from models.models import Role, Vendor, Customers
-from permission import is_owner_admin, is_user, is_registered
+from models.models import Role, Vendor
+from permission import is_owner_admin
 
 
 async def keyboard_list_user() -> InlineKeyboardMarkup:
@@ -151,3 +150,5 @@ async def keyboard_list_user_for_order(data) -> InlineKeyboardMarkup | bool:
     kb_builder.row(*buttons, width=2)
 
     return kb_builder.as_markup()
+
+

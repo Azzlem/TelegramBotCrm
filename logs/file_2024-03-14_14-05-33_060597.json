@@ -1,0 +1,137 @@
+2024-03-14 14:05:33.065 | ERROR    | keybords.keyboard_create_order:keyboard_create_order_second:43 - What is your phone number?
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/main.py", line 87, in <module>
+    asyncio.run(main())
+    │       │   └ <function main at 0x75fb99c48f40>
+    │       └ <function run at 0x75fb9d807060>
+    └ <module 'asyncio' from '/usr/lib/python3.11/asyncio/__init__.py'>
+
+  File "/usr/lib/python3.11/asyncio/runners.py", line 188, in run
+    return runner.run(main)
+           │      │   └ <coroutine object main at 0x75fb99ed7ac0>
+           │      └ <function Runner.run at 0x75fb9d807420>
+           └ <asyncio.runners.Runner object at 0x75fb99c4cf10>
+  File "/usr/lib/python3.11/asyncio/runners.py", line 120, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<main() running at /home/azzlem/Proj/crm_bot/main.py:83> wait_for=<Future pending cb=[Task.t...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x75fb9d804f40>
+           │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x75fb99c4cf10>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 637, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x75fb9d804ea0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 604, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x75fb9d806ca0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 1909, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x75fb9d949120>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/usr/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,)}
+                     │    │           │    └ Update(update_id=890038979, message=Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x75fb99ece310>
+                     │    └ <function Dispatcher.feed_update at 0x75fb9b1739c0>
+                     └ <Dispatcher '0x75fb9c981090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x75fb9b172200>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x75fb99c4c490>
+                     └ <Dispatcher '0x75fb9c981090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890038979, message=Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x75fb99c4c9d0>, functools.par...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890038979, message=Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x75fb99c4ca90>, <function TelegramEventObserver.tri...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890038979, message=Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC...
+                 └ <function TelegramEventObserver.trigger at 0x75fb99c49440>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │             └ Update(update_id=890038979, message=Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC...
+                 └ <function CallableObject.call at 0x75fb99c714e0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x75fb9c981090'>>, Update(update_id=890038979, mess...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │    │                           │                  └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                 │    │                           └ 'message'
+                 │    └ <function Router.propagate_event at 0x75fb9b172fc0>
+                 └ <Dispatcher '0x75fb9c981090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │        │                     │               └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x75fb99c71760>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x75fb9b172200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x75fb99c42090>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x75fb9b173060>
+                 └ <Dispatcher '0x75fb9c981090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 156, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                     │      │                           │                  └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                     │      │                           └ 'message'
+                     │      └ <function Router.propagate_event at 0x75fb9b172fc0>
+                     └ <Router '0x75fb99dbfbd0'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │        │                     │               └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x75fb99c71800>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x75fb9b172200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x75fb99dbfc10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x75fb9b173060>
+                 └ <Router '0x75fb99dbfbd0'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                     │        │       └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                     │        └ <function TelegramEventObserver.trigger at 0x75fb9b172340>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x75fb99dbfc10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x75fb9c981090'>, 'bots': (<aiogram.client.bot.Bot object at 0x75fb99ece310>,), 'bot': <aiogram.c...
+                 │             └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                 └ <function CallableObject.call at 0x75fb99c72ca0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<function search_order at 0x75fb99daac00>, Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11,...
+
+  File "/home/azzlem/Proj/crm_bot/handlers/order_handlers/fsm_create_order.py", line 33, in search_order
+    keyboard = await keyboard_create_order_second(message.text)
+                     │                            │       └ '5555555'
+                     │                            └ Message(message_id=3382, date=datetime.datetime(2024, 3, 14, 11, 5, 33, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='pr...
+                     └ <function keyboard_create_order_second at 0x75fb99da9e40>
+
+> File "/home/azzlem/Proj/crm_bot/keybords/keyboard_create_order.py", line 36, in keyboard_create_order_second
+    for customer in customers:
+                    └ <models.models.Customers object at 0x75fb9b858910>
+
+TypeError: 'Customers' object is not iterable

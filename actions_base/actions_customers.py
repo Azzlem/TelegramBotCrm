@@ -34,7 +34,7 @@ class CustomerActions:
     @classmethod
     async def get_customer(cls, data):
         async with async_session_maker() as db:
-            customer = await db.execute(select(Customers).where(Customers.id == data['customer_id']))
+            customer = await db.execute(select(Customers).where(Customers.id == data))
             customer = customer.scalars().first()
             return customer
 
@@ -51,4 +51,12 @@ class CustomerActions:
         async with async_session_maker() as db:
             customer = await db.execute(select(Customers).where(Customers.phone == data))
             customer = customer.scalars().first()
+            return customer
+
+    @classmethod
+    async def add_customer_in_orger(cls, fullname, phone, address):
+        customer = Customers(fullname=fullname, phone=phone, address=address)
+        async with async_session_maker() as db:
+            db.add(customer)
+            await db.commit()
             return customer

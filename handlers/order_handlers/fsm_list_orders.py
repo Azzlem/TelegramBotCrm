@@ -1,5 +1,3 @@
-import sys
-
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -9,7 +7,7 @@ from actions_base.actions_users import UserActions
 from formatting.order_formatting import orders_all
 from permission import is_owner_admin, is_user, is_registered
 
-logger.add("file_{time}.json")
+
 router = Router()
 
 
@@ -33,6 +31,7 @@ async def list_orders(message: Message):
                 await message.answer(text=orders)
 
         elif await is_owner_admin(user):
+
             orders = await OrdersActions.get_all_orders_with_all_info()
             orders = await orders_all(orders)
             await message.answer(text=orders)
@@ -40,5 +39,6 @@ async def list_orders(message: Message):
         else:
             await message.answer(text="Ненадо тыкать незнакомные команды....это плохо влияет на карму.")
     except:
-        logger.add("file_{time}.json")
+        logger.add("logs/file_{time}.json", rotation="weekly")
+        logger.exception("What?!")
         await message.answer(text="что то не так")
