@@ -103,6 +103,34 @@ async def yes_callback(callback: CallbackQuery, state: FSMContext):
     await state.set_state(FormCreateOrder.user_id)
 
 
+@router.callback_query(StateFilter(FormCreateOrder.user_choice), F.data == 'no')
+async def no_user_callback(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    data = await state.get_data()
+    data = DataObject(data=data)
+    try:
+        if data.customer_id is None:
+            customer = await CustomerActions.add_customer_in_orger(data.fullname, data.phone, data.address)
+        else:
+            customer = await CustomerActions.get_customer(data.customer_id)
+        order = await OrdersActions.create_orders_without_user(customer.id)
+        item = await ItemsActions.add_item_to_order(data.vendor, data.model, data.defect, order.id)
+        await callback.message.answer(
+            text=f"{customer.fullname} - {order.id} - {item.id}"
+        )
+        await state.clear()
+    except DBAPIError:
+        logger.add("logs/file_{time}.json", rotation="weekly")
+        logger.exception("What?!")
+
+
+@router.callback_query(StateFilter(FormCreateOrder.user_choice), F.data == 'eblan')
+async def no_user_callback(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await state.clear()
+    await callback.message.answer(text="Ещё раз так сделаешь я тебя забаню!")
+
+
 @router.callback_query(StateFilter(FormCreateOrder.user_id))
 async def user_id_callback(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await state.update_data(user_id=callback.data)
