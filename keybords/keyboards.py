@@ -151,4 +151,3 @@ async def keyboard_list_user_for_order(data) -> InlineKeyboardMarkup | bool:
 
     return kb_builder.as_markup()
 
-

@@ -16,7 +16,6 @@ async def keyboard_list_orders_status() -> InlineKeyboardMarkup:
     buttons.append(InlineKeyboardButton(text=temp[5], callback_data=Status.ISSUED_TO_CUSTOMER.name))
     buttons.append(InlineKeyboardButton(text=temp[6], callback_data=Status.CLOSED.name))
 
-
     kb_builder.row(*buttons, width=2)
     return kb_builder.as_markup()
 
@@ -64,3 +63,13 @@ async def keyboard_list_order_details_another_var(orders) -> InlineKeyboardMarku
 
     kb_builder.row(*buttons, width=8)
     return [kb_builder.as_markup(), text]
+
+
+async def keyboard_choice_options_to_order() -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(text="Назначить инженера", callback_data="user"),
+                                           InlineKeyboardButton(text="Посмотреть подробности", callback_data="detail"),
+                                           InlineKeyboardButton(text="Выйти", callback_data="exit")]
+
+    kb_builder.row(*buttons, width=2)
+    return kb_builder.as_markup()

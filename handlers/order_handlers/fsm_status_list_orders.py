@@ -1,12 +1,12 @@
 from aiogram import Router, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
 
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from keybords.keyboard_list_orders import keyboard_list_orders_status, keyboard_list_order_details, \
-    keyboard_list_order_details_another_var
+    keyboard_list_order_details_another_var, keyboard_choice_options_to_order
 from models.enums import Status
 from permission import is_registered, is_owner_admin_user, is_owner_admin, is_user
 from states.states_orders import FormListOrderForStatus
@@ -26,12 +26,12 @@ async def create_order(message: Message, state: FSMContext):
         await state.update_data(user=user)
 
 
-@router.callback_query(StateFilter(FormListOrderForStatus.choise_status), F.data.in_([status.name for status in Status]))
+@router.callback_query(StateFilter(FormListOrderForStatus.choise_status),
+                       F.data.in_([status.name for status in Status]))
 async def accept_order(callback: CallbackQuery, state: FSMContext):
     await state.update_data(status=callback.data)
     await callback.message.delete()
     data = await state.get_data()
-
 
     user = data['user']
     status = data['status']
@@ -61,3 +61,15 @@ async def accept_order(callback: CallbackQuery, state: FSMContext):
             await state.set_state(FormListOrderForStatus.order)
 
 
+@router.callback_query(StateFilter(FormListOrderForStatus.order))
+async def callback_query_order(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(order_id=int(callback.data))
+    await callback.message.delete()
+
+    keyboard = await keyboard_choice_options_to_order()
+
+    await callback.message.answer(
+        text="Что будем делать с заказом?",
+        reply_markup=keyboard
+    )
+    await state.set_state(FormListOrderForStatus.choise_action)

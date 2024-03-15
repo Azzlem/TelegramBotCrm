@@ -27,5 +27,6 @@ class FormCreateOrder(StatesGroup):
 
 
 class FormListOrderForStatus(StatesGroup):
+    choise_action = State()
     choise_status = State()
     order = State()
