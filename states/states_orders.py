@@ -24,3 +24,8 @@ class FormCreateOrder(StatesGroup):
     choice_customer = State()
     search_customer = State()
     create_or_no = State()
+
+
+class FormListOrderForStatus(StatesGroup):
+    choise_status = State()
+    order = State()

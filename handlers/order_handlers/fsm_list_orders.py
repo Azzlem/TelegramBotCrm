@@ -7,11 +7,9 @@ from actions_base.actions_users import UserActions
 from formatting.order_formatting import orders_all
 from permission import is_owner_admin, is_user, is_registered
 
-
 router = Router()
 
 
-@logger.catch
 @router.message(Command(commands='list_orders'))
 async def list_orders(message: Message):
     try:

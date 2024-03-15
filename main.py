@@ -11,7 +11,7 @@ from actions_base.actions_users import UserActions
 from bot_commands import admin_commands, user_commands, ungerister_user_commands
 from handlers.customer_handlers import fsm_add_customer, fsm_edit_customer
 from handlers.item_handlers import fsm_add_item
-from handlers.order_handlers import fsm_add_order, fsm_list_orders, fsm_create_order
+from handlers.order_handlers import fsm_add_order, fsm_list_orders, fsm_create_order, fsm_status_list_orders
 from settings import settings, string_cancel
 from handlers import base_handlers
 from handlers.user_handlers import fsm_perm_user, fsm_del_user, fsm_list_detail_user, user_handlers
@@ -76,6 +76,7 @@ dp.include_router(fsm_edit_customer.router)
 dp.include_router(fsm_add_order.router)
 dp.include_router(fsm_list_orders.router)
 dp.include_router(fsm_create_order.router)
+dp.include_router(fsm_status_list_orders.router)
 
 
 async def main():

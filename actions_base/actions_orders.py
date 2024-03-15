@@ -84,3 +84,18 @@ class OrdersActions:
                                       options(selectinload(cls.model.components)))
             orders = orders.scalars().all()
             return orders
+
+    @classmethod
+    async def get_all_orders_accepted(cls, user, status):
+        async with async_session_maker() as db:
+            if not user:
+                orders = await db.execute(select(Orders).filter_by(status=status).
+                                          options(selectinload(cls.model.customer)).
+                                          options(selectinload(cls.model.items)))
+            elif user:
+                orders = await db.execute(select(Orders).filter_by(user_id=user.id).filter_by(status=status).
+                                          options(selectinload(cls.model.customer)).
+                                          options(selectinload(cls.model.items)))
+            orders = orders.scalars().all()
+            return orders
+

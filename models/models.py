@@ -3,16 +3,17 @@ from enum import Enum
 from sqlalchemy import BigInteger, String, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from base import Base
+from models.enums import Status
 
 
-class Status(Enum):
-    ACCEPTED = 'Принят'
-    APPOINTED = 'Назначен'
-    IN_WORK = 'В работе'
-    DEVICE_IN_SERVICE = 'Техника в СЦ'
-    PAID = 'Оплачено'
-    ISSUED_TO_CUSTOMER = 'Техника выдана клиенту'
-    CLOSED = 'Закрыт'
+# class Status(Enum):
+#     ACCEPTED = 'Принят'
+#     APPOINTED = 'Назначен'
+#     IN_WORK = 'В работе'
+#     DEVICE_IN_SERVICE = 'Техника в СЦ'
+#     PAID = 'Оплачено'
+#     ISSUED_TO_CUSTOMER = 'Техника выдана клиенту'
+#     CLOSED = 'Закрыт'
 
 
 class Role(Enum):
