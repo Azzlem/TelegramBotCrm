@@ -1,7 +1,10 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from actions_base.actions_users import UserActions
 from models.enums import Status
+from models.models import Users
+from permission import is_owner_admin
 
 
 async def keyboard_list_orders_status() -> InlineKeyboardMarkup:
@@ -65,11 +68,34 @@ async def keyboard_list_order_details_another_var(orders) -> InlineKeyboardMarku
     return [kb_builder.as_markup(), text]
 
 
-async def keyboard_choice_options_to_order() -> InlineKeyboardMarkup:
+async def keyboard_choice_options_to_order(data) -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
-    buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(text="Назначить инженера", callback_data="user"),
-                                           InlineKeyboardButton(text="Посмотреть подробности", callback_data="detail"),
-                                           InlineKeyboardButton(text="Выйти", callback_data="exit")]
+    user = await UserActions.get_user(data)
+    if await is_owner_admin(user):
+        buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(text="Назначить инженера", callback_data="user"),
+                                               InlineKeyboardButton(text="Посмотреть подробности",
+                                                                    callback_data="detail"),
+                                               InlineKeyboardButton(text="Выйти", callback_data="exit"),
+                                               InlineKeyboardButton(text="Изменить статус", callback_data="status")]
+    else:
+        buttons: list[InlineKeyboardButton] = [InlineKeyboardButton(text="Посмотреть подробности",
+                                                                    callback_data="detail"),
+                                               InlineKeyboardButton(text="Выйти", callback_data="exit"),
+                                               InlineKeyboardButton(text="Изменить статус", callback_data="status")]
+
+    kb_builder.row(*buttons, width=2)
+    return kb_builder.as_markup()
+
+
+async def keyboard_choice_user() -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
+    users = await UserActions.get_all_users()
+    for user in users:
+        buttons.append(InlineKeyboardButton(
+            text=f"{user.fullname}",
+            callback_data=f"{user.id}"
+        ))
 
     kb_builder.row(*buttons, width=2)
     return kb_builder.as_markup()

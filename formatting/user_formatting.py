@@ -69,3 +69,17 @@ class DataObject:
         if self._data.get("customer_id") is None:
             return None
         return int(self._data.get("customer_id"))
+
+    @property
+    def order_id(self):
+        if self._data.get("order_id") is None:
+            return None
+        else:
+            return int(self._data.get("order_id"))
+
+    @property
+    def status(self):
+        if self._data.get("status") is None:
+            return None
+        else:
+            return self._data.get("status")

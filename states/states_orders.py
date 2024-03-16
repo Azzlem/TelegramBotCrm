@@ -27,6 +27,7 @@ class FormCreateOrder(StatesGroup):
 
 
 class FormListOrderForStatus(StatesGroup):
-    choise_action = State()
-    choise_status = State()
-    order = State()
+    appoint = State()  # назначить
+    choise_action = State()  # выбор действия
+    choise_status = State()  # выбор статуса
+    order = State()  # список заказов

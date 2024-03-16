@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 from base import async_session_maker
@@ -24,7 +24,7 @@ class OrdersActions:
             return order
 
     @classmethod
-    async def create_orders_without_user(cls, customer_id, ):
+    async def create_orders_without_user(cls, customer_id):
         async with async_session_maker() as session:
             order = Orders(customer_id=customer_id)
             session.add(order)
@@ -99,3 +99,36 @@ class OrdersActions:
             orders = orders.scalars().all()
             return orders
 
+    @classmethod
+    async def appoint_user_to_order(cls, user_id, order_id):
+        async with async_session_maker() as db:
+            if not user_id:
+                return False
+            else:
+                await db.execute(update(Orders).where(Orders.id == order_id).values(user_id=user_id))
+                await db.commit()
+                return True
+
+    @classmethod
+    async def get_order(cls, order_id):
+        async with async_session_maker() as db:
+            if not order_id:
+                return False
+            else:
+                order = await db.execute(select(Orders).where(Orders.id == order_id).
+                                         options(selectinload(cls.model.customer)).
+                                         options(selectinload(cls.model.items))
+                                         )
+                order = order.scalars().first()
+                return order
+
+    @classmethod
+    async def status_order(cls, status, order_id):
+        async with async_session_maker() as db:
+            if not order_id or not status:
+                return False
+            else:
+                await db.execute(update(Orders).where(Orders.id == order_id).values(status=status))
+
+                await db.commit()
+                return True
