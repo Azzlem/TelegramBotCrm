@@ -27,6 +27,7 @@ class FormCreateOrder(StatesGroup):
 
 
 class FormListOrderForStatus(StatesGroup):
+    choise_status_final = State()  # изменить статус
     appoint = State()  # назначить
     choise_action = State()  # выбор действия
     choise_status = State()  # выбор статуса

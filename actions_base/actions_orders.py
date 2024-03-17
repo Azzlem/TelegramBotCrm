@@ -132,3 +132,16 @@ class OrdersActions:
 
                 await db.commit()
                 return True
+
+    @classmethod
+    async def get_all_info_order(cls, order_id):
+        async with async_session_maker() as db:
+            if not order_id:
+                return False
+            order = await db.execute(select(Orders).where(Orders.id == order_id).
+                                     options(selectinload(cls.model.customer)).
+                                     options(selectinload(cls.model.items)).
+                                     options(selectinload(cls.model.components)).
+                                     options(selectinload(cls.model.comments)))
+            order = order.scalars().first()
+            return order

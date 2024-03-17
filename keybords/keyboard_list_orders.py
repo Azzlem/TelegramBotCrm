@@ -4,20 +4,20 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from actions_base.actions_users import UserActions
 from models.enums import Status
 from models.models import Users
-from permission import is_owner_admin
+from permission import is_owner_admin, is_user
+from settings import rus_name_status
 
 
 async def keyboard_list_orders_status() -> InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
-    buttons: list[InlineKeyboardButton] = []
-    temp = ["ПРИНЯТ", "НАЗНАЧЕН", "В РАБОТЕ", "ТЕХНИКА В СЦ", "ОПЛАЧЕН", "ВЫДАН", "ЗАКРЫТ"]
-    buttons.append(InlineKeyboardButton(text=temp[0], callback_data=Status.ACCEPTED.name))
-    buttons.append(InlineKeyboardButton(text=temp[1], callback_data=Status.APPOINTED.name))
-    buttons.append(InlineKeyboardButton(text=temp[2], callback_data=Status.IN_WORK.name))
-    buttons.append(InlineKeyboardButton(text=temp[3], callback_data=Status.DEVICE_IN_SERVICE.name))
-    buttons.append(InlineKeyboardButton(text=temp[4], callback_data=Status.PAID.name))
-    buttons.append(InlineKeyboardButton(text=temp[5], callback_data=Status.ISSUED_TO_CUSTOMER.name))
-    buttons.append(InlineKeyboardButton(text=temp[6], callback_data=Status.CLOSED.name))
+    buttons: list[InlineKeyboardButton] = [
+        InlineKeyboardButton(text=rus_name_status[0], callback_data=Status.ACCEPTED.name),
+        InlineKeyboardButton(text=rus_name_status[1], callback_data=Status.APPOINTED.name),
+        InlineKeyboardButton(text=rus_name_status[2], callback_data=Status.IN_WORK.name),
+        InlineKeyboardButton(text=rus_name_status[3], callback_data=Status.DEVICE_IN_SERVICE.name),
+        InlineKeyboardButton(text=rus_name_status[4], callback_data=Status.PAID.name),
+        InlineKeyboardButton(text=rus_name_status[5], callback_data=Status.ISSUED_TO_CUSTOMER.name),
+        InlineKeyboardButton(text=rus_name_status[6], callback_data=Status.CLOSED.name)]
 
     kb_builder.row(*buttons, width=2)
     return kb_builder.as_markup()
@@ -63,7 +63,7 @@ async def keyboard_list_order_details_another_var(orders) -> InlineKeyboardMarku
         for item in el.items:
             items_str += f"{item.vendor} - {item.model} - {item.defect}"
         text += f"Номер заказа: {el.id}\nКлиент: {el.customer.fullname}\nАдрес: {el.customer.address}\n{items_str}\n\n"
-
+    buttons.append(InlineKeyboardButton(text="Выход", callback_data="exit"))
     kb_builder.row(*buttons, width=8)
     return [kb_builder.as_markup(), text]
 
@@ -96,6 +96,28 @@ async def keyboard_choice_user() -> InlineKeyboardMarkup:
             text=f"{user.fullname}",
             callback_data=f"{user.id}"
         ))
+
+    kb_builder.row(*buttons, width=2)
+    return kb_builder.as_markup()
+
+
+async def keyboard_status_order(data) -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
+    user = await UserActions.get_user(data)
+
+    if await is_owner_admin(user):
+        buttons.append(InlineKeyboardButton(text=rus_name_status[0], callback_data=Status.ACCEPTED.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[1], callback_data=Status.APPOINTED.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[2], callback_data=Status.IN_WORK.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[3], callback_data=Status.DEVICE_IN_SERVICE.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[4], callback_data=Status.PAID.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[5], callback_data=Status.ISSUED_TO_CUSTOMER.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[6], callback_data=Status.CLOSED.name))
+    if await is_user(user):
+        buttons.append(InlineKeyboardButton(text=rus_name_status[2], callback_data=Status.IN_WORK.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[3], callback_data=Status.DEVICE_IN_SERVICE.name))
+        buttons.append(InlineKeyboardButton(text=rus_name_status[5], callback_data=Status.ISSUED_TO_CUSTOMER.name))
 
     kb_builder.row(*buttons, width=2)
     return kb_builder.as_markup()
