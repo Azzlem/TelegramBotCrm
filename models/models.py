@@ -68,6 +68,7 @@ class Users(Base):
     updated_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now, onupdate=datetime.now)
 
     orders: Mapped[list["Orders"]] = relationship(back_populates='user')
+    comments: Mapped[list["Comments"]] = relationship(back_populates='owner')
 
 
 class Orders(Base):
@@ -132,6 +133,7 @@ class Comments(Base):
     updated_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now, onupdate=datetime.now)
 
     order: Mapped["Orders"] = relationship(back_populates="comments")
+    owner: Mapped["Users"] = relationship(back_populates="comments")
 
 
 class Components(Base):

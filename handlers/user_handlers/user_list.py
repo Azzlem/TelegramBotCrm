@@ -36,6 +36,6 @@ async def detail_user(callback: CallbackQuery, state: FSMContext):
     data = DataObject(data=data)
     user = await UserActions.get_user_from_id(data)
     await callback.message.answer(
-        f"{user.fullname} - {user.role.name}\n"
-        f"{user.username} - работает с {user.created_on.strftime('%d-%m-%Y')}\n"
+        f"ФИО: {user.fullname}\nПрава: {user.role.name}\n"
+        f"Никнэйм: {user.username}\nРаботает с {user.created_on.strftime('%d-%m-%Y')}\n"
     )

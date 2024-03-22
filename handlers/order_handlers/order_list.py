@@ -1,14 +1,15 @@
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
+from aiogram.types import Message, CallbackQuery
 
+from actions_base.actions_comments import CommentActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import DataObject
-from keybords.keyboard_list_orders import keyboard_list_orders_status, keyboard_list_order_details, \
-    keyboard_list_order_details_another_var, keyboard_choice_options_to_order, keyboard_choice_user, \
-    keyboard_status_order
+from keybords.keyboard_list_orders import (keyboard_list_orders_status, keyboard_list_order_details_another_var,
+                                           keyboard_choice_options_to_order, keyboard_choice_user, keyboard_status_order
+                                           )
 from models.enums import Status
 from permission import is_registered, is_owner_admin_user, is_owner_admin, is_user
 from states.states_orders import FormListOrderForStatus
@@ -29,38 +30,31 @@ async def create_order(message: Message, state: FSMContext):
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.choise_status),
+                       F.data == "exit")
+async def accept_order_exit(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer(text="Ну и ладно!")
+    await state.clear()
+
+
+@router.callback_query(StateFilter(FormListOrderForStatus.choise_status),
                        F.data.in_([status.name for status in Status]))
 async def accept_order(callback: CallbackQuery, state: FSMContext):
     await state.update_data(status=callback.data)
     await callback.message.delete()
     data = await state.get_data()
-
     user = data['user']
     status = data['status']
-
-    if await is_owner_admin(user):
-        user = None
-        orders = await OrdersActions.get_all_orders_accepted(user, status)
-        keyboard, text = await keyboard_list_order_details_another_var(orders)
-        await callback.message.answer(
-            text=text,
-            reply_markup=keyboard
-        )
-        if text == "Нет заказов":
-            await state.clear()
-        else:
-            await state.set_state(FormListOrderForStatus.order)
-    elif await is_user(user):
-        orders = await OrdersActions.get_all_orders_accepted(user, status)
-        keyboard, text = await keyboard_list_order_details_another_var(orders)
-        await callback.message.answer(
-            text=text,
-            reply_markup=keyboard
-        )
-        if text == "Нет заказов":
-            await state.clear()
-        else:
-            await state.set_state(FormListOrderForStatus.order)
+    orders = await OrdersActions.get_all_orders_accepted(user, status)
+    keyboard, text = await keyboard_list_order_details_another_var(orders)
+    await callback.message.answer(
+        text=text,
+        reply_markup=keyboard
+    )
+    if text == "Нет заказов":
+        await state.clear()
+    else:
+        await state.set_state(FormListOrderForStatus.order)
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.order), F.data == 'exit')
@@ -82,6 +76,22 @@ async def callback_query_order(callback: CallbackQuery, state: FSMContext):
         reply_markup=keyboard
     )
     await state.set_state(FormListOrderForStatus.choise_action)
+
+
+@router.callback_query(StateFilter(FormListOrderForStatus.choise_action), F.data == "comment")
+async def callback_query_comment_order(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer(text="Напишите комментарий")
+    await state.set_state(FormListOrderForStatus.comment)
+
+
+@router.message(StateFilter(FormListOrderForStatus.comment))
+async def callback_query_comment_order_write(message: Message, state: FSMContext):
+    await state.update_data(comment=message.text)
+    data = await state.get_data()
+    comment = await CommentActions.create(data["comment"], int(data["order_id"]), data['user'].id)
+    await message.answer(text=f"Коментарий '{comment}' успешно добавлен.")
+    await state.clear()
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.choise_action), F.data == "user")
@@ -110,7 +120,7 @@ async def callback_query_appoint(callback: CallbackQuery, state: FSMContext, bot
                                                       f"Назначены на заказ №{order.id}\n"
                                                       f"Имя клиента: {order.customer.fullname}\n"
                                                       f"Адрес:  {order.customer.address}\n"
-                                                      f"Техника: {order.items[0].vendor} - {order.items[0].model}\n"
+                                                      f"Техника: {order.items[0].vendor.name} - {order.items[0].model}\n"
                                                       f"Неисправность: {order.items[0].defect}\n")
     await state.clear()
 
@@ -129,19 +139,36 @@ async def callback_query_user(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     data = await state.get_data()
     order = await OrdersActions.get_all_info_order(data['order_id'])
-    str_items = ''
+    # str_items = ''
+    # for item in order.items:
+    #     str_items += f"Марка - {item.vendor.name}\nМодель - {item.model}\nНеисправность - {item.defect}\n"
+    # comments = '\n'.join([f"{comment.owner.username} - {comment.text}" for comment in order.comments])
+    # await callback.message.answer(
+    #     text=f"Заказ номер: {order.id}\n"
+    #          f"ФИО клиента: {order.customer.fullname}\n"
+    #          f"Телефон клиента: {order.customer.phone}\n"
+    #          f"Адрес клиента: {order.customer.address}\n"
+    #          f"{str_items}"
+    #          f"{order.components}\n"
+    #          f"{comments}"
+    # )
+    text = (f"Заказ номер: {order.id}\n"
+            f"ФИО клиента: {order.customer.fullname}\n"
+            f"Телефон клиента: {order.customer.phone}\n"
+            f"Адрес клиента: {order.customer.address}\n"
+            "Список Items:\n")
     for item in order.items:
-        str_items += f"Марка - {item.vendor}\nМодель - {item.model}\nНеисправность - {item.defect}\n"
+        text += f"{item.vendor.name} {item.model} {item.defect}\n"
 
-    await callback.message.answer(
-        text=f"Заказ номер: {order.id}\n"
-             f"ФИО клиента: {order.customer.fullname}\n"
-             f"Телефон клиента: {order.customer.phone}\n"
-             f"Адрес клиента: {order.customer.address}\n"
-             f"{str_items}"
-             f"{order.components}\n"
-             f"{order.comments}"
-    )
+    text += "Список компонентов:\n"
+    for component in order.components:
+        text += f"{component.name} {component.shop} {component.price}\n"
+
+    text += "Список комментариев:\n"
+    comments = await CommentActions.get_comments_by_order_id(order.id)
+    for comment in comments:
+        text += f"{comment.owner.fullname} - {comment.text} - {comment.created_on.strftime('%d-%m-%Y %H-%M')}\n"
+    await callback.message.answer(text=text)
     await state.clear()
 
 
