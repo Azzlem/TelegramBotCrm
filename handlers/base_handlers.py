@@ -17,3 +17,10 @@ async def process_cancel_command(message: Message):
 
     await message.delete()
     await message.answer("Отменять нечего. Вы вне машины состояний\n\n")
+
+
+# # Этот хэндлер будет срабатывать на любые сообщения, кроме тех
+# # для которых есть отдельные хэндлеры, вне состояний
+# @router.message(StateFilter(default_state))
+# async def send_echo(message: Message):
+#     await message.reply(text='Извините, моя твоя не понимать')

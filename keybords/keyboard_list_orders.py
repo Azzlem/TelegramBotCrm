@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from models.enums import Status
 from permission import is_owner_admin, is_user
@@ -40,14 +41,19 @@ async def keyboard_list_order_details_another_var(orders) -> InlineKeyboardMarku
     return [kb_builder.as_markup(), text]
 
 
-async def keyboard_choice_options_to_order(data) -> InlineKeyboardMarkup:
+async def keyboard_choice_options_to_order(data, order_id) -> InlineKeyboardMarkup:
     user = await UserActions.get_user(data)
+
     buttons = [
         InlineKeyboardButton(text="Посмотреть подробности", callback_data="detail"),
         InlineKeyboardButton(text="Выйти", callback_data="exit"),
-        InlineKeyboardButton(text="Изменить статус", callback_data="status"),
-        InlineKeyboardButton(text="Добавить комментарий", callback_data="comment")
+        # InlineKeyboardButton(text="Изменить статус", callback_data="status"),
+        InlineKeyboardButton(text="Добавить комментарий", callback_data="comment"),
+        InlineKeyboardButton(text="Добавить запчасть", callback_data="component")
     ]
+    order = await OrdersActions.get_order(order_id)
+    if order.status != Status.CLOSED:
+        buttons.insert(0, (InlineKeyboardButton(text="Изменить статус", callback_data="status")))
 
     if await is_owner_admin(user):
         buttons.insert(0, InlineKeyboardButton(text="Назначить инженера", callback_data="user"))

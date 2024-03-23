@@ -21,3 +21,4 @@ settings = Settings()
 
 string_cancel = 'Вы вышли из операции изменения\n\nВыберите в меню новый запрос!\n'
 rus_name_status = ["ПРИНЯТ", "НАЗНАЧЕН", "В РАБОТЕ", "ТЕХНИКА В СЦ", "ОПЛАЧЕН", "ВЫДАН КЛИЕНТУ", "ЗАКРЫТ"]
+PHOTO_FOLDER_PATH = '/home/azzlem/Proj/crm_bot/photo'

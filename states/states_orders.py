@@ -27,6 +27,10 @@ class FormCreateOrder(StatesGroup):
 
 
 class FormListOrderForStatus(StatesGroup):
+    price_component = State()
+    name_component_else = State()
+    name_component = State()
+    component = State()
     comment = State()
     choise_status_final = State()  # изменить статус
     appoint = State()  # назначить

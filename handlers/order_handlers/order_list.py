@@ -1,9 +1,12 @@
+import os
+
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, PhotoSize, InputFile, FSInputFile
 
 from actions_base.actions_comments import CommentActions
+from actions_base.actions_components import ComponentActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from formatting.user_formatting import DataObject
@@ -11,8 +14,10 @@ from keybords.keyboard_list_orders import (keyboard_list_orders_status, keyboard
                                            keyboard_choice_options_to_order, keyboard_choice_user, keyboard_status_order
                                            )
 from models.enums import Status
-from permission import is_registered, is_owner_admin_user, is_owner_admin, is_user
+from permission import is_registered, is_owner_admin_user
+from settings import PHOTO_FOLDER_PATH
 from states.states_orders import FormListOrderForStatus
+from utils import dowmload_image
 
 router = Router()
 
@@ -69,13 +74,62 @@ async def callback_query_order(callback: CallbackQuery, state: FSMContext):
     await state.update_data(order_id=int(callback.data))
     await callback.message.delete()
 
-    keyboard = await keyboard_choice_options_to_order(callback.from_user)
+    keyboard = await keyboard_choice_options_to_order(callback.from_user, int(callback.data))
 
     await callback.message.answer(
         text="Что будем делать с заказом?",
         reply_markup=keyboard
     )
     await state.set_state(FormListOrderForStatus.choise_action)
+
+
+@router.callback_query(StateFilter(FormListOrderForStatus.choise_action), F.data == "component")
+async def callback_query_component_order(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer(text="Добавьте фото чека")
+    await state.set_state(FormListOrderForStatus.component)
+
+
+@router.message(StateFilter(FormListOrderForStatus.component), F.photo[-1].as_('largest_photo'))
+async def callback_query_component_order(message: Message, state: FSMContext, largest_photo: PhotoSize, bot: Bot):
+    try:
+        path_file = await dowmload_image(message, bot)
+        await state.update_data(path_photo=path_file)
+        await state.set_state(FormListOrderForStatus.name_component_else)
+        await message.answer(text="Введите название запчасти")
+    except:
+        await message.answer(text='Обратитесь к администратору @Azzlem')
+        await state.clear()
+
+
+@router.message(StateFilter(FormListOrderForStatus.name_component_else))
+async def callback_query_name_component_order(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+    await message.answer(text="Введите цену")
+    await state.set_state(FormListOrderForStatus.price_component)
+
+
+@router.message(StateFilter(FormListOrderForStatus.price_component), F.text.isdigit())
+async def callback_query_price_component_order(message: Message, state: FSMContext):
+    await state.update_data(price=int(message.text))
+    data = await state.get_data()
+    data = DataObject(data=data)
+    await ComponentActions.create(data.name, data.path_photo, data.order_id, data.price)
+    await message.answer(text="Запчасть добавлена")
+
+
+@router.message(StateFilter(FormListOrderForStatus.price_component))
+async def callback_query_price_component_order(message: Message, state: FSMContext):
+    await message.answer(text=f"Это не цыфра, или ты заплатил {message.text} рублей?")
+
+
+@router.message(StateFilter(FormListOrderForStatus.component))
+async def warning_not_photo(message: Message):
+    await message.answer(
+        text='Пожалуйста, на этом шаге отправьте '
+             'ваше фото\n\nЕсли вы хотите прервать '
+             'заполнение анкеты - отправьте команду /cancel'
+    )
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.choise_action), F.data == "comment")
@@ -135,40 +189,28 @@ async def callback_query_user(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.choise_action), F.data == "detail")
-async def callback_query_user(callback: CallbackQuery, state: FSMContext):
+async def callback_query_user(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await callback.message.delete()
     data = await state.get_data()
     order = await OrdersActions.get_all_info_order(data['order_id'])
-    # str_items = ''
-    # for item in order.items:
-    #     str_items += f"Марка - {item.vendor.name}\nМодель - {item.model}\nНеисправность - {item.defect}\n"
-    # comments = '\n'.join([f"{comment.owner.username} - {comment.text}" for comment in order.comments])
-    # await callback.message.answer(
-    #     text=f"Заказ номер: {order.id}\n"
-    #          f"ФИО клиента: {order.customer.fullname}\n"
-    #          f"Телефон клиента: {order.customer.phone}\n"
-    #          f"Адрес клиента: {order.customer.address}\n"
-    #          f"{str_items}"
-    #          f"{order.components}\n"
-    #          f"{comments}"
-    # )
     text = (f"Заказ номер: {order.id}\n"
             f"ФИО клиента: {order.customer.fullname}\n"
             f"Телефон клиента: {order.customer.phone}\n"
             f"Адрес клиента: {order.customer.address}\n"
-            "Список Items:\n")
+            f"\nСписок Техники клиента:\n")
     for item in order.items:
-        text += f"{item.vendor.name} {item.model} {item.defect}\n"
-
-    text += "Список компонентов:\n"
+        text += f"{item.vendor.name} модель: {item.model}\nНеисправность: {item.defect}\n"
+    text += "\nСписок компонентов:\n"
     for component in order.components:
-        text += f"{component.name} {component.shop} {component.price}\n"
-
-    text += "Список комментариев:\n"
+        text += f"{component.name} - {component.price}\n"
+    text += "\nСписок комментариев:\n"
     comments = await CommentActions.get_comments_by_order_id(order.id)
     for comment in comments:
         text += f"{comment.owner.fullname} - {comment.text} - {comment.created_on.strftime('%d-%m-%Y %H-%M')}\n"
     await callback.message.answer(text=text)
+    for comment_foto in order.components:
+        photo = FSInputFile(f"{PHOTO_FOLDER_PATH}/{comment_foto.path_photo}")
+        await bot.send_photo(callback.from_user.id, photo)
     await state.clear()
 
 

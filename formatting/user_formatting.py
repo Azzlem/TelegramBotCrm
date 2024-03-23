@@ -83,3 +83,24 @@ class DataObject:
             return None
         else:
             return self._data.get("status")
+
+    @property
+    def name(self):
+        if self._data.get("name") is None:
+            return None
+        else:
+            return self._data.get("name")
+
+    @property
+    def price(self):
+        if self._data.get("price") is None:
+            return None
+        else:
+            return int(self._data.get("price"))
+
+    @property
+    def path_photo(self):
+        if self._data.get("path_photo") is None:
+            return None
+        else:
+            return self._data.get("path_photo")

@@ -146,5 +146,6 @@ class Components(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=True)
     created_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
     updated_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now, onupdate=datetime.now)
+    path_photo: Mapped[str] = mapped_column(nullable=False)
 
     order: Mapped["Orders"] = relationship(back_populates="components")
