@@ -3,6 +3,7 @@ from sqlalchemy.orm import selectinload
 
 from base import async_session_maker
 from models.models import Orders, Users
+from permission import is_owner_admin
 
 
 class OrdersActions:
@@ -88,7 +89,8 @@ class OrdersActions:
     @classmethod
     async def get_all_orders_accepted(cls, user, status):
         async with async_session_maker() as db:
-            if not user:
+            print(user.username)
+            if is_owner_admin(user):
                 orders = await db.execute(select(Orders).filter_by(status=status).
                                           options(selectinload(cls.model.customer)).
                                           options(selectinload(cls.model.items)))

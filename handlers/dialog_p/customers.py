@@ -6,7 +6,8 @@ from aiogram_dialog.widgets.text import Const, Format
 
 from actions_base.actions_customers import CustomerActions
 from handlers.dialog_p import dialog_base_def
-from handlers.dialog_p.dialog_base_def import go_start
+
+
 from handlers.dialog_p.dialog_states import Customer
 from models.models import Customers
 
@@ -80,7 +81,7 @@ clients_dialog = Dialog(
         Row(
             Button(Const('Найти клиента'), id='button_find_client', on_click=go_find_client),
         ),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=go_start),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Customer.customer
     ),
     Window(
@@ -92,7 +93,7 @@ clients_dialog = Dialog(
             on_error=error_phone_fio_handler,
         ),
         Button(Const('Назад'), id='back_1', on_click=dialog_base_def.go_back),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=go_start),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Customer.find
     ),
     Window(
@@ -103,7 +104,7 @@ clients_dialog = Dialog(
         ),
         Button(Format('{customer}'), id='customer', on_click=well_done),
         Button(Const('Назад'), id='back_2', on_click=dialog_base_def.go_back),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=go_start),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         getter=customer_getter,
         state=Customer.list_customer
     ),
