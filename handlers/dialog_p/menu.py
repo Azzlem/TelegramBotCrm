@@ -17,6 +17,10 @@ async def start_customer(callback: CallbackQuery, button: Button, dialog_manager
     await dialog_manager.start(state=Customer.customer)
 
 
+async def exit_all(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.done()
+
+
 async def user_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
     user = await UserActions.get_user(event_from_user)
     return {'username': user.username}
@@ -30,8 +34,9 @@ menu_dialog = Dialog(
             Button(Const('Клиенты'), id='go_second', on_click=start_customer),
             Button(Const('Заказы'), id='go_second', on_click=start_customer),
             Button(Const('Инженеры'), id='go_second', on_click=start_customer),
-            Button(Const('Статистика'), id='go_second', on_click=start_customer),
+            Button(Const('Статистика'), id='go_second', on_click=start_customer)
         ),
+        Button(Const("Выход"), id='exit', on_click=exit_all),
         getter=user_getter,
         state=Menu.menu
     ),
