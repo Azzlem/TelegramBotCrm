@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery
 
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_users import UserActions
+from dataclass import DataClass
 from keybords.keyboards import keyboard_choice_customer_edit, keyboard_customer_edit
 from permission import is_owner_admin
 from states.states_customer import FormUpdateCustomer
@@ -83,6 +84,7 @@ async def customer_edit_fullname_final(message: Message, state: FSMContext):
     await message.answer(
         "Новая почта записано!"
     )
+    await state.clear()
 
 
 @router.message(StateFilter(FormUpdateCustomer.email))
@@ -135,7 +137,5 @@ async def customer_edit_fullname_final(message: Message, state: FSMContext):
     await state.update_data(fullname=message.text)
     data = await state.get_data()
     await CustomerActions.edit_customer(data)
-    await message.answer(
-        "Новое имя записано!"
-    )
+    await message.answer("Новое имя записано!")
     await state.clear()

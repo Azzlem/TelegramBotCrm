@@ -1,0 +1,187 @@
+2024-03-25 20:44:25.977 | ERROR    | handlers.dialog_p.first_dialog:start:36 - What?!
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/setup.py", line 55, in find_dialog
+    return self._dialogs[state.group]
+           │    │        │     └ <property object at 0x72b6fadd1c60>
+           │    │        └ <State 'MySG:main'>
+           │    └ {<class 'aiogram_dialog.about.AiogramDialogStates'>: <Dialog(<StatesGroup 'AiogramDialogStates'>)>}
+           └ <aiogram_dialog.setup.DialogRegistry object at 0x72b6faa5e790>
+
+KeyError: <class 'handlers.dialog_p.first_dialog.MySG'>
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/main.py", line 100, in <module>
+    asyncio.run(main())
+    │       │   └ <function main at 0x72b6f9849a80>
+    │       └ <function run at 0x72b6fd703060>
+    └ <module 'asyncio' from '/usr/lib/python3.11/asyncio/__init__.py'>
+
+  File "/usr/lib/python3.11/asyncio/runners.py", line 188, in run
+    return runner.run(main)
+           │      │   └ <coroutine object main at 0x72b6f99425c0>
+           │      └ <function Runner.run at 0x72b6fd703420>
+           └ <asyncio.runners.Runner object at 0x72b6f984f7d0>
+  File "/usr/lib/python3.11/asyncio/runners.py", line 120, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<main() running at /home/azzlem/Proj/crm_bot/main.py:96> wait_for=<Future pending cb=[Task.t...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x72b6fd700f40>
+           │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x72b6f984f7d0>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 637, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x72b6fd700ea0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 604, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x72b6fd702ca0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 1909, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x72b6fdc9d120>
+    └ <Handle <TaskStepMethWrapper object at 0x72b6f99b7a60>()>
+  File "/usr/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x72b6f99b7a60>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x72b6f99b7a60>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x72b6f99b7a60>()>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,)}
+                     │    │           │    └ Update(update_id=890040486, message=Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UT...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x72b6f99ddb10>
+                     │    └ <function Dispatcher.feed_update at 0x72b6fae2f9c0>
+                     └ <Dispatcher '0x72b6f9de1c10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x72b6fae2e200>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x72b6f984edd0>
+                     └ <Dispatcher '0x72b6f9de1c10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890040486, message=Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UT...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x72b6f984f2d0>, functools.par...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890040486, message=Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UT...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x72b6f984f350>, <function TelegramEventObserver.tri...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890040486, message=Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UT...
+                 └ <function TelegramEventObserver.trigger at 0x72b6f9849ee0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │             └ Update(update_id=890040486, message=Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UT...
+                 └ <function CallableObject.call at 0x72b6f986e160>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x72b6f9de1c10'>>, Update(update_id=890040486, mess...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │    │                           │                  └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 │    │                           └ 'message'
+                 │    └ <function Router.propagate_event at 0x72b6fae2efc0>
+                 └ <Dispatcher '0x72b6f9de1c10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │        │                     │               └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x72b6f986d4e0>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x72b6fae2e200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x72b6f984c890>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x72b6fae2f060>
+                 └ <Dispatcher '0x72b6f9de1c10'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 156, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                     │      │                           │                  └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                     │      │                           └ 'message'
+                     │      └ <function Router.propagate_event at 0x72b6fae2efc0>
+                     └ <Router '0x72b6fc5c7090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │        │                     │               └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x72b6f986e200>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x72b6fae2e200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x72b6fab9aed0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/context/intent_middleware.py", line 139, in process_message
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 └ functools.partial(<aiogram_dialog.manager.manager_middleware.BgFactoryMiddleware object at 0x72b6faa5e9d0>, <function Router....
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager_middleware.py", line 77, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 └ <function Router.propagate_event.<locals>._wrapped at 0x72b6f986e2a0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x72b6fae2f060>
+                 └ <Router '0x72b6fc5c7090'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                     │        │       └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                     │        └ <function TelegramEventObserver.trigger at 0x72b6fae2e340>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x72b6fab9aed0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │             └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 └ functools.partial(<aiogram_dialog.manager.manager_middleware.ManagerMiddleware object at 0x72b6faa5e7d0>, functools.partial(<...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager_middleware.py", line 52, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                 │       └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                 └ functools.partial(<function context_saver_middleware at 0x72b6fab58fe0>, <function CallableObject.call at 0x72b6f986e3e0>)
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/context/intent_middleware.py", line 198, in context_saver_middleware
+    result = await handler(event, data)
+                   │       │      └ {'dispatcher': <Dispatcher '0x72b6f9de1c10'>, 'bots': (<aiogram.client.bot.Bot object at 0x72b6f99ddb10>,), 'bot': <aiogram.c...
+                   │       └ Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25, tzinfo=TzInfo(UTC)), chat=Chat(id=647457914, type='p...
+                   └ <function CallableObject.call at 0x72b6f986e3e0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<function start at 0x72b6faa2f420>, Message(message_id=5458, date=datetime.datetime(2024, 3, 25, 17, 44, 25...
+
+> File "/home/azzlem/Proj/crm_bot/handlers/dialog_p/first_dialog.py", line 33, in start
+    await dialog_manager.start(MySG.main, mode=StartMode.RESET_STACK)
+          │              │     │    │          │         └ <StartMode.RESET_STACK: 'RESET_STACK'>
+          │              │     │    │          └ <enum 'StartMode'>
+          │              │     │    └ <State 'MySG:main'>
+          │              │     └ <class 'handlers.dialog_p.first_dialog.MySG'>
+          │              └ <function ManagerImpl.start at 0x72b6fab907c0>
+          └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x72b6f988bcd0>
+
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager.py", line 207, in start
+    await self._start_normal(state, data)
+          │    │             │      └ None
+          │    │             └ <State 'MySG:main'>
+          │    └ <function ManagerImpl._start_normal at 0x72b6fab909a0>
+          └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x72b6f988bcd0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager.py", line 241, in _start_normal
+    new_dialog = self._registry.find_dialog(state)
+                 │    │         │           └ <State 'MySG:main'>
+                 │    │         └ <function DialogRegistry.find_dialog at 0x72b6faba02c0>
+                 │    └ <aiogram_dialog.setup.DialogRegistry object at 0x72b6faa5e790>
+                 └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x72b6f988bcd0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/setup.py", line 57, in find_dialog
+    raise UnregisteredDialogError(
+          └ <class 'aiogram_dialog.api.exceptions.UnregisteredDialogError'>
+
+aiogram_dialog.api.exceptions.UnregisteredDialogError: No dialog found for `<StatesGroup 'MySG'>` (looking by state `<State 'MySG:main'>`)

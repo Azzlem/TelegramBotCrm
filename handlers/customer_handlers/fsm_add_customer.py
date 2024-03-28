@@ -5,6 +5,7 @@ from aiogram.types import Message
 
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_users import UserActions
+from dataclass import DataClass
 from permission import is_owner_admin_user
 from states.states_customer import FormAddCustomer
 
@@ -29,9 +30,7 @@ async def add_customer_fullname(message: Message, state: FSMContext):
         row.append(el.isalpha())
     if not False in row:
         await state.update_data(fullname=message.text)
-        await message.answer(
-            "Введите номер телефона клиента"
-        )
+        await message.answer("Введите номер телефона клиента")
         await state.set_state(FormAddCustomer.phone)
     else:
         await message.answer("Это не похоже на имя и фамилию. Введи то что просят!")
@@ -45,9 +44,7 @@ async def add_customer_phone(message: Message, state: FSMContext):
         await state.clear()
     else:
         await state.update_data(phone=int(message.text))
-        await message.answer(
-            "Введите адрес клиента"
-        )
+        await message.answer("Введите адрес клиента")
         await state.set_state(FormAddCustomer.address)
 
 
@@ -64,9 +61,8 @@ async def warning_not_phone(message: Message):
 @router.message(StateFilter(FormAddCustomer.address))
 async def warning_not_address(message: Message, state: FSMContext):
     await state.update_data(address=message.text)
-    data = await state.get_data()
+    data_state = await state.get_data()
+    data = DataClass(data_state)
     customer = await CustomerActions.add_customer(data)
-    await message.answer(
-        text=f"Клиент {customer.fullname} создан!"
-    )
+    await message.answer(text=f"Клиент {customer.fullname} создан!")
     await state.clear()

@@ -1,6 +1,7 @@
 from sqlalchemy import select, update
 
 from base import async_session_maker
+from dataclass import DataClass
 from models.models import Customers
 
 
@@ -9,8 +10,11 @@ class CustomerActions:
 
     @classmethod
     async def add_customer(cls, data):
-        customer = Customers(**data)
-
+        customer = Customers(
+            fullname=data.fullname,
+            phone=data.phone,
+            address=data.address
+        )
         async with async_session_maker() as db:
             db.add(customer)
             await db.commit()
@@ -41,7 +45,6 @@ class CustomerActions:
     @classmethod
     async def edit_customer(cls, data):
         customer_id = data.pop('customer_id')
-
         async with async_session_maker() as db:
             await db.execute(update(Customers).where(Customers.id == customer_id).values(**data))
             await db.commit()

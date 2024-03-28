@@ -1,13 +1,15 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.filters import Command, StateFilter, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.filters.state import StatesGroup, State
 from aiogram.fsm.state import default_state
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message, BotCommandScopeChat
 
+import handlers.dialog_p.menu
 from actions_base.actions_users import UserActions
 from bot_commands import admin_commands, user_commands, ungerister_user_commands
 from handlers.customer_handlers import fsm_add_customer, fsm_edit_customer
@@ -18,13 +20,9 @@ from settings import settings, string_cancel
 from handlers import base_handlers
 from handlers.user_handlers import user_change_permission, user_delete, user_list, user_handlers
 
-from aiogram_dialog import Window, Dialog, DialogManager, StartMode, setup_dialogs
-from aiogram_dialog.widgets.kbd import Button
-from aiogram_dialog.widgets.text import Const
-
 storage = MemoryStorage()
 TOKEN = settings.TOKEN
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=storage)
 
 
@@ -71,26 +69,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
         )
 
 
-class MySG(StatesGroup):
-    main = State()
-
-
-main_window = Window(
-    Const("Hello, unknown person"),  # just a constant text
-    Button(Const("Useless button"), id="nothing"),  # button with text and id
-    state=MySG.main,  # state is used to identify window between dialogs
-)
-
-dialog = Dialog(main_window)
-setup_dialogs(dp)
-
-
-@dp.message(Command("root"))
-async def start(message: Message, dialog_manager: DialogManager):
-    await dialog_manager.start(MySG.main, mode=StartMode.RESET_STACK)
-
-
-dp.include_router(dialog)
+dp.include_router(handlers.dialog_p.menu.router)
 dp.include_router(base_handlers.router)
 
 # Хендлеры Пользователя
