@@ -10,4 +10,5 @@ async def go_start(callback: CallbackQuery, button: Button, dialog_manager: Dial
 
 
 async def go_back(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await callback.message.delete()
     await dialog_manager.back()

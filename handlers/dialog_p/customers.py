@@ -1,21 +1,30 @@
 from aiogram.types import User, CallbackQuery, Message
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.input import ManagedTextInput, TextInput
-from aiogram_dialog.widgets.kbd import Row, Button
+from aiogram_dialog.widgets.kbd import Row, Button, Select
 from aiogram_dialog.widgets.text import Const, Format
 
 from actions_base.actions_customers import CustomerActions
 from handlers.dialog_p import dialog_base_def
-
 
 from handlers.dialog_p.dialog_states import Customer
 from models.models import Customers
 
 
 async def customer_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
-    customers = dialog_manager.dialog_data.get('customers')
-    print(customers)
-    return {'customer': customers.fullname}
+    customers: Customers | list = dialog_manager.dialog_data.get('customers')
+    if isinstance(customers, list):
+        elems: list = []
+        for customer in customers:
+            elems.append((customer.fullname, customer.id))
+        return {'elems': elems}
+    else:
+        return {'elems': [(customers.fullname, customers.id)]}
+
+
+async def customer_getter_orders(dialog_manager: DialogManager, event_from_user: User, **kwargs):
+    print(dialog_manager.dialog_data.get('customer_id'))
+    return {'elems': [('elems', 'elems')]}
 
 
 async def go_find_client(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
@@ -27,12 +36,26 @@ async def go_choice_client(callback: CallbackQuery, button: Button, dialog_manag
 
 
 async def well_done(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    customer: Customers = dialog_manager.dialog_data.get('customers')
+    print("Э")
+    # customer = dialog_manager.dialog_data.get('customers')
+    # if len(customer) > 0:
+    #     customer = customer[0]
+    # await callback.message.answer(text=f"КЛИЕНТ\n"
+    #                                    f"Имя: {customer.fullname}\n"
+    #                                    f"Адрес: {customer.address}\n"
+    #                                    f"Телефон: {customer.phone}\n")
+    # await dialog_manager.switch_to(Customer.list_order)
+
+
+async def customer_selection(callback: CallbackQuery, widget: Select,
+                             dialog_manager: DialogManager, item_id: str):
+    customer: Customers = await CustomerActions.get_customer(int(item_id))
+    dialog_manager.dialog_data['customer_id'] = item_id
     await callback.message.answer(text=f"КЛИЕНТ\n"
                                        f"Имя: {customer.fullname}\n"
                                        f"Адрес: {customer.address}\n"
                                        f"Телефон: {customer.phone}\n")
-    await dialog_manager.reset_stack()
+    await dialog_manager.switch_to(Customer.list_customer_choice)
 
 
 def phone_fio_check(text: str) -> int | str:
@@ -75,7 +98,13 @@ async def error_phone_fio_handler(
     )
 
 
-clients_dialog = Dialog(
+async def list_order(callback: CallbackQuery, widget: Select,
+                     dialog_manager: DialogManager):
+    await callback.message.delete()
+    await dialog_manager.switch_to(Customer.list_order)
+
+
+customer_dialog = Dialog(
     Window(
         Const('Клиенты'),
         Row(
@@ -98,14 +127,38 @@ clients_dialog = Dialog(
     ),
     Window(
         Const('Список Клинтов по вашему запросу'),
-        TextInput(
-            id='choice_customer',
-
+        Select(
+            Format('{item[0]}'),
+            id='customer',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=customer_selection,
         ),
-        Button(Format('{customer}'), id='customer', on_click=well_done),
         Button(Const('Назад'), id='back_2', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         getter=customer_getter,
         state=Customer.list_customer
     ),
+    Window(
+        Const("Подробная информация о клиенте"),
+        Button(Const("Список заказов"), id='list_order', on_click=list_order),
+        Button(Const('Назад'), id='back_3', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Customer.list_customer_choice
+    ),
+    Window(
+        Const("Список заказов"),
+        Select(
+            Format('{item[0]}'),
+            id='customer',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=customer_selection,
+        ),
+
+        Button(Const('Назад'), id='back_3', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Customer.list_order,
+        getter=customer_getter_orders
+    )
 )

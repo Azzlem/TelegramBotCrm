@@ -9,3 +9,5 @@ class Customer(StatesGroup):
     customer = State()
     find = State()
     list_customer = State()
+    list_customer_choice = State()
+    list_order = State()

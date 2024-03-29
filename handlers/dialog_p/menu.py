@@ -7,7 +7,7 @@ from aiogram_dialog.widgets.text import Const, Format
 from loguru import logger
 
 from actions_base.actions_users import UserActions
-from handlers.dialog_p.customers import clients_dialog
+from handlers.dialog_p.customers import customer_dialog
 from handlers.dialog_p.dialog_states import Menu, Customer
 
 router = Router()
@@ -44,7 +44,7 @@ menu_dialog = Dialog(
 
 setup_dialogs(router)
 router.include_router(menu_dialog)
-router.include_router(clients_dialog)
+router.include_router(customer_dialog)
 
 
 @router.message(Command("menu"))
