@@ -11,3 +11,12 @@ class Customer(StatesGroup):
     list_customer = State()
     list_customer_choice = State()
     list_order = State()
+
+
+class Order(StatesGroup):
+
+    order_start = State()
+    create_order = State()
+    create_customer = State()
+    create_customer_phone = State()
+    create_customer_address = State()

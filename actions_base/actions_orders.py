@@ -147,3 +147,29 @@ class OrdersActions:
                                      options(selectinload(cls.model.comments)))
             order = order.scalars().first()
             return order
+
+    @classmethod
+    async def get_all_info_order_users(cls, order_id):
+        async with async_session_maker() as db:
+            if not order_id:
+                return False
+            order = await db.execute(select(Orders).where(Orders.id == order_id).
+                                     options(selectinload(cls.model.customer)).
+                                     options(selectinload(cls.model.items)).
+                                     options(selectinload(cls.model.components)).
+                                     options(selectinload(cls.model.comments)).
+                                     options(selectinload(cls.model.user)))
+            order = order.scalars().first()
+            return order
+
+    @classmethod
+    async def get_all_orders_to_customer(cls, customer_id):
+        async with async_session_maker() as db:
+            if not customer_id:
+                return False
+            orders = await db.execute(select(Orders).where(Orders.customer_id == customer_id))
+            orders = orders.scalars().all()
+            if not isinstance(orders, list):
+                return [orders]
+            else:
+                return orders
