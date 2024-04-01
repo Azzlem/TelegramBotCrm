@@ -15,9 +15,10 @@ class OrdersActions:
             order = Orders(**data)
             session.add(order)
             await session.commit()
+            return order
 
     @classmethod
-    async def create_orders(cls, customer_id, user_id):
+    async def create_order(cls, customer_id, user_id):
         async with async_session_maker() as session:
             order = Orders(customer_id=customer_id, user_id=user_id)
             session.add(order)

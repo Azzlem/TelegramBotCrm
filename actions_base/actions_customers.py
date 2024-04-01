@@ -63,3 +63,10 @@ class CustomerActions:
             db.add(customer)
             await db.commit()
             return customer
+
+    @classmethod
+    async def custom_add_customer(cls, customer):
+        async with async_session_maker() as db:
+            db.add(customer)
+            await db.commit()
+            return customer

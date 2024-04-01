@@ -11,6 +11,7 @@ class ItemsActions:
         async with async_session_maker() as db:
             db.add(item)
             await db.commit()
+            return item
 
     @classmethod
     async def add_item_to_order(cls, vendor, model, defect, order_id):

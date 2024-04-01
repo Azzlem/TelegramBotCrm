@@ -143,7 +143,7 @@ async def user_id_callback(callback: CallbackQuery, state: FSMContext, bot: Bot)
         else:
             customer = await CustomerActions.get_customer(data.customer_id)
         user = await UserActions.get_user_from_id(data)
-        order = await OrdersActions.create_orders(customer.id, data.user_id)
+        order = await OrdersActions.create_order(customer.id, data.user_id)
         item = await ItemsActions.add_item_to_order(data.vendor, data.model, data.defect, order.id)
         await callback.message.answer(
             text=f"{customer.fullname} - {order.id} - {item.id}"

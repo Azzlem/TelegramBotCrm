@@ -19,7 +19,7 @@ async def start_customer(callback: CallbackQuery, button: Button, dialog_manager
 
 
 async def start_order(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(state=Order.order_start)
+    await dialog_manager.start(state=Order.order_start,  mode=StartMode.RESET_STACK)
 
 
 async def exit_all(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):

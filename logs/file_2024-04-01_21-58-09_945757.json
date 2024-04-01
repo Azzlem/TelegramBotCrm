@@ -1,0 +1,237 @@
+2024-04-01 21:58:09.949 | ERROR    | utils:create_customer:43 - What?!
+Traceback (most recent call last):
+
+  File "/home/azzlem/Proj/crm_bot/main.py", line 99, in <module>
+    asyncio.run(main())
+    │       │   └ <function main at 0x74b51633e020>
+    │       └ <function run at 0x74b51a1f3060>
+    └ <module 'asyncio' from '/usr/lib/python3.11/asyncio/__init__.py'>
+
+  File "/usr/lib/python3.11/asyncio/runners.py", line 188, in run
+    return runner.run(main)
+           │      │   └ <coroutine object main at 0x74b51640b4c0>
+           │      └ <function Runner.run at 0x74b51a1f3420>
+           └ <asyncio.runners.Runner object at 0x74b51634c950>
+  File "/usr/lib/python3.11/asyncio/runners.py", line 120, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<main() running at /home/azzlem/Proj/crm_bot/main.py:95> wait_for=<Future pending cb=[Task.t...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x74b51a1f0f40>
+           │    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x74b51634c950>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 637, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x74b51a1f0ea0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 604, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x74b51a1f2ca0>
+    └ <_UnixSelectorEventLoop running=True closed=False debug=False>
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 1909, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x74b51a345120>
+    └ <Handle <TaskStepMethWrapper object at 0x74b515949ed0>()>
+  File "/usr/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x74b515949ed0>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x74b515949ed0>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x74b515949ed0>()>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,)}
+                     │    │           │    └ Update(update_id=890042377, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x74b516459e10>
+                     │    └ <function Dispatcher.feed_update at 0x74b51791b9c0>
+                     └ <Dispatcher '0x74b5188b0390'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x74b51791a200>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x74b516343f90>
+                     └ <Dispatcher '0x74b5188b0390'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890042377, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x74b51634c510>, functools.par...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890042377, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x74b51634c590>, <function TelegramEventObserver.tri...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ Update(update_id=890042377, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ <function TelegramEventObserver.trigger at 0x74b51636a8e0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │             └ Update(update_id=890042377, message=None, edited_message=None, channel_post=None, edited_channel_post=None, message_reaction=...
+                 └ <function CallableObject.call at 0x74b516368860>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x74b5188b0390'>>, Update(update_id=890042377, mess...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │    │                           │                  └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │    │                           └ 'callback_query'
+                 │    └ <function Router.propagate_event at 0x74b51791afc0>
+                 └ <Dispatcher '0x74b5188b0390'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x74b51633e3e0>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x74b51791a200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x74b516342190>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x74b51791b060>
+                 └ <Dispatcher '0x74b5188b0390'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 156, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                     │      │                           │                  └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x74b51791afc0>
+                     └ <Router '0x74b51950d650'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x74b51633e340>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x74b51791a200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x74b516439b50>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/context/intent_middleware.py", line 186, in process_callback_query
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 └ functools.partial(<aiogram_dialog.manager.manager_middleware.BgFactoryMiddleware object at 0x74b516459c10>, <function Router....
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager_middleware.py", line 77, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 └ <function Router.propagate_event.<locals>._wrapped at 0x74b51590c180>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x74b51791b060>
+                 └ <Router '0x74b51950d650'>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 156, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                     │      │                           │                  └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x74b51791afc0>
+                     └ <Dialog(<StatesGroup 'Order'>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │        │                     │               └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x74b51590c0e0>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x74b51791a200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x74b516431c10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x74b51791b060>
+                 └ <Dialog(<StatesGroup 'Order'>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                     │        │       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                     │        └ <function TelegramEventObserver.trigger at 0x74b51791a340>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x74b516431c10>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │             └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 └ functools.partial(<aiogram_dialog.manager.manager_middleware.ManagerMiddleware object at 0x74b516459a10>, functools.partial(<...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/manager/manager_middleware.py", line 52, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                 │       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 └ functools.partial(<function context_saver_middleware at 0x74b5176491c0>, <function CallableObject.call at 0x74b515a3e700>)
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/context/intent_middleware.py", line 198, in context_saver_middleware
+    result = await handler(event, data)
+                   │       │      └ {'dispatcher': <Dispatcher '0x74b5188b0390'>, 'bots': (<aiogram.client.bot.Bot object at 0x74b516459e10>,), 'bot': <aiogram.c...
+                   │       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                   └ <function CallableObject.call at 0x74b515a3e700>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dialog._callback_handler of <Dialog(<StatesGroup 'Order'>)>>, CallbackQuery(id='2780810568263...
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/dialog.py", line 145, in _callback_handler
+    await window.process_callback(cleaned_callback, self, dialog_manager)
+          │      │                │                 │     └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+          │      │                │                 └ <Dialog(<StatesGroup 'Order'>)>
+          │      │                └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+          │      └ <function Window.process_callback at 0x74b517687d80>
+          └ <Window(<State 'Order:user_choice'>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/window.py", line 100, in process_callback
+    await self.keyboard.process_callback(callback, dialog, manager)
+          │    │        │                │         │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+          │    │        │                │         └ <Dialog(<StatesGroup 'Order'>)>
+          │    │        │                └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+          │    │        └ <function Keyboard.process_callback at 0x74b5179945e0>
+          │    └ <aiogram_dialog.widgets.kbd.group.Group object at 0x74b5164309d0>
+          └ <Window(<State 'Order:user_choice'>)>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/base.py", line 79, in process_callback
+    return await self._process_other_callback(callback, dialog, manager)
+                 │    │                       │         │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+                 │    │                       │         └ <Dialog(<StatesGroup 'Order'>)>
+                 │    │                       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │    └ <function Group._process_other_callback at 0x74b5176240e0>
+                 └ <aiogram_dialog.widgets.kbd.group.Group object at 0x74b5164309d0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/group.py", line 74, in _process_other_callback
+    if await b.process_callback(callback, dialog, manager):
+             │ │                │         │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+             │ │                │         └ <Dialog(<StatesGroup 'Order'>)>
+             │ │                └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+             │ └ <function Keyboard.process_callback at 0x74b5179945e0>
+             └ <aiogram_dialog.widgets.kbd.scrolling_group.ScrollingGroup object at 0x74b516430710>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/base.py", line 79, in process_callback
+    return await self._process_other_callback(callback, dialog, manager)
+                 │    │                       │         │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+                 │    │                       │         └ <Dialog(<StatesGroup 'Order'>)>
+                 │    │                       └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+                 │    └ <function Group._process_other_callback at 0x74b5176240e0>
+                 └ <aiogram_dialog.widgets.kbd.scrolling_group.ScrollingGroup object at 0x74b516430710>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/group.py", line 74, in _process_other_callback
+    if await b.process_callback(callback, dialog, manager):
+             │ │                │         │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+             │ │                │         └ <Dialog(<StatesGroup 'Order'>)>
+             │ │                └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+             │ └ <function Keyboard.process_callback at 0x74b5179945e0>
+             └ <aiogram_dialog.widgets.kbd.select.Select object at 0x74b5164306d0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/base.py", line 73, in process_callback
+    return await self._process_item_callback(
+                 │    └ <function Select._process_item_callback at 0x74b517634540>
+                 └ <aiogram_dialog.widgets.kbd.select.Select object at 0x74b5164306d0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/kbd/select.py", line 119, in _process_item_callback
+    await self.on_click.process_event(
+          │    │        └ <function SimpleEventProcessor.process_event at 0x74b51797a480>
+          │    └ <aiogram_dialog.widgets.widget_event.SimpleEventProcessor object at 0x74b516430790>
+          └ <aiogram_dialog.widgets.kbd.select.Select object at 0x74b5164306d0>
+  File "/home/azzlem/Proj/crm_bot/.venv/lib/python3.11/site-packages/aiogram_dialog/widgets/widget_event.py", line 34, in process_event
+    await self.callback(event, source, manager, *args, **kwargs)
+          │    │        │      │       │         │       └ {}
+          │    │        │      │       │         └ ('1',)
+          │    │        │      │       └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+          │    │        │      └ <aiogram_dialog.widgets.kbd.select.Select object at 0x74b5164306d0>
+          │    │        └ CallbackQuery(id='2780810568263797635', from_user=User(id=647457914, is_bot=False, first_name='Александр', last_name='Сидорен...
+          │    └ <function select_user at 0x74b51642c5e0>
+          └ <aiogram_dialog.widgets.widget_event.SimpleEventProcessor object at 0x74b516430790>
+
+  File "/home/azzlem/Proj/crm_bot/handlers/dialog_p/orders.py", line 63, in select_user
+    customer = await CreateOrderFull.create_customer(data=dialog_manager.dialog_data, customer=None)
+                     │               │                    │              └ <property object at 0x74b51766fa60>
+                     │               │                    └ <aiogram_dialog.manager.manager.ManagerImpl object at 0x74b5158a3650>
+                     │               └ <staticmethod(<function CreateOrderFull.create_customer at 0x74b51642c0e0>)>
+                     └ <class 'utils.CreateOrderFull'>
+
+> File "/home/azzlem/Proj/crm_bot/utils.py", line 35, in create_customer
+    if data['customer'] is None:
+       └ DataClass(data={'name': 'ОООПиськинХуй', 'phone': '4554564', 'address': 'ебенёва 67', 'vendor': 'BROTHER', 'model': 'gpk-554'...
+
+TypeError: 'DataClass' object is not subscriptable

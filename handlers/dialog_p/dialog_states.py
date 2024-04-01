@@ -20,3 +20,8 @@ class Order(StatesGroup):
     create_customer = State()
     create_customer_phone = State()
     create_customer_address = State()
+    choice_vendor = State()
+    model_item = State()
+    defect = State()
+    user_add = State()
+    user_choice = State()
