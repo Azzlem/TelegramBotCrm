@@ -14,7 +14,6 @@ class Customer(StatesGroup):
 
 
 class Order(StatesGroup):
-
     order_start = State()
     create_order = State()
     create_customer = State()
@@ -25,3 +24,5 @@ class Order(StatesGroup):
     defect = State()
     user_add = State()
     user_choice = State()
+    input_customer_name = State()
+    choice_customer_button = State()

@@ -6,7 +6,7 @@ from actions_base.actions_customers import CustomerActions
 from actions_base.actions_items import ItemsActions
 from actions_base.actions_orders import OrdersActions
 from dataclass import DataClass
-from models.models import Customers, Orders, Items
+from models.models import Customers
 from settings import PHOTO_FOLDER_PATH
 
 
@@ -51,7 +51,7 @@ class CreateOrderFull:
         data_order = DataClass(data['data'])
         customer = data['customer']
         try:
-            order = await OrdersActions.create_order(customer.id, int(data_order.user))
+            order = await OrdersActions.create_order(customer.id, data_order.user)
             return order
         except:
             logger.add("logs/file_{time}.json", rotation="weekly")

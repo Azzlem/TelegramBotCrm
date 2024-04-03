@@ -6,10 +6,11 @@ from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button, Select, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format
 
+from actions_base.actions_customers import CustomerActions
 from actions_base.actions_users import UserActions
 from handlers.dialog_p import dialog_base_def
 from handlers.dialog_p.dialog_states import Order
-from models.models import Vendor
+from models.models import Vendor, Customers
 from permission import is_owner_admin, is_user
 from utils import CreateOrderFull
 
@@ -29,10 +30,18 @@ async def user_getter(dialog_manager: DialogManager, event_from_user: User, **kw
         list_user = []
         for user in users:
             list_user.append((user.fullname, user.id))
-
+        list_user.append(("Не назначать", None))
         return {'elems': list_user}
     elif await is_user(user_from_event):
         return {'elems': [(user_from_event.fullname, user_from_event.id)]}
+
+
+async def customers_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
+    customer_list = []
+    customers: list[Customers] = dialog_manager.dialog_data.get('customers_model')
+    for customer in customers:
+        customer_list.append((customer.fullname, customer.id))
+    return {'elems': customer_list}
 
 
 async def create_order(callback: CallbackQuery, widget: Button,
@@ -59,10 +68,14 @@ async def user_choice(callback: CallbackQuery, widget: Button,
 async def select_user(callback: CallbackQuery, widget: Select,
                       dialog_manager: DialogManager, item_id: str):
     dialog_manager.dialog_data['user'] = item_id
-
-    customer = await CreateOrderFull.create_customer(data=dialog_manager.dialog_data, customer=None)
-    order = await CreateOrderFull.create_order(data=dialog_manager.dialog_data, customer=customer)
-    item = await CreateOrderFull.create_item(data=dialog_manager.dialog_data, order_id=order.id)
+    if not dialog_manager.dialog_data.get('customer'):
+        customer = await CreateOrderFull.create_customer(data=dialog_manager.dialog_data, customer=None)
+        order = await CreateOrderFull.create_order(data=dialog_manager.dialog_data, customer=customer)
+        item = await CreateOrderFull.create_item(data=dialog_manager.dialog_data, order_id=order.id)
+    else:
+        customer = dialog_manager.dialog_data['customer']
+        order = await CreateOrderFull.create_order(data=dialog_manager.dialog_data, customer=customer)
+        item = await CreateOrderFull.create_item(data=dialog_manager.dialog_data, order_id=order.id)
 
     await callback.message.answer(
         text=f"Заказ {order.id} на технику {item.vendor}-{item.model}\nКлиента {customer.fullname} успешно создан"
@@ -70,10 +83,29 @@ async def select_user(callback: CallbackQuery, widget: Select,
     await dialog_manager.start(Order.order_start, mode=StartMode.RESET_STACK)
 
 
+async def select_customer(callback: CallbackQuery, widget: Select,
+                          dialog_manager: DialogManager, item_id: str):
+    customer = await CustomerActions.get_customer(int(item_id))
+    dialog_manager.dialog_data['customer'] = customer
+    await dialog_manager.switch_to(Order.choice_vendor)
+
+
+async def input_customer_name(callback: CallbackQuery, widget: Button,
+                              dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Order.input_customer_name)
+
+
 def name_check(text: str):
     if all(ch.isdigit() for ch in text):
         raise ValueError
-    return re.sub(r'[^a-zA-Zа-яА-Я0-9]', '', text)
+    return re.sub(r'[^a-zA-Zа-яА-Я0-9 ]', '', text)
+
+
+def name_phone_check(text: str):
+    if all(ch.isdigit() for ch in text) and len(text) == 7 or len(text) == 11:
+        return text
+    else:
+        return re.sub(r'[^a-zA-Zа-яА-Я0-9 ]', '', text)
 
 
 def phone_check(text: str):
@@ -145,6 +177,34 @@ async def correct_defect_handler(
     await dialog_manager.switch_to(Order.user_choice)
 
 
+async def correct_customer_handler(
+        message: Message,
+        widget: ManagedTextInput,
+        dialog_manager: DialogManager,
+        text: str) -> None:
+    if all(ch.isdigit() for ch in text):
+        customer = [await CustomerActions.get_customer_by_phone(int(text))]
+    else:
+        customer = await CustomerActions.get_customers_for_fullname(text)
+    if customer:
+        dialog_manager.dialog_data["customers_model"] = customer
+        await dialog_manager.switch_to(Order.choice_customer_button)
+    else:
+        await message.answer(
+            text='Не найден. Попробуйте еще раз'
+        )
+
+
+async def incorrect_customer_handler(
+        message: Message,
+        widget: ManagedTextInput,
+        dialog_manager: DialogManager,
+        error: ValueError):
+    await message.answer(
+        text='Вы ввели некорректное имя. Попробуйте еще раз'
+    )
+
+
 async def incorrect_name_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -208,7 +268,7 @@ order_dialog = Dialog(
     Window(
         Const('Меню создания заказа'),
         Button(Const('Новый клиент'), id='new_customer_button', on_click=create_customer),
-        Button(Const('Выбрать из существующих'), id='choice_customer_button'),
+        Button(Const('Выбрать из существующих'), id='input_customer_name', on_click=input_customer_name),
         Button(Const('Назад'), id='back_1', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.create_order
@@ -221,6 +281,7 @@ order_dialog = Dialog(
             on_success=correct_name_handler,
             on_error=incorrect_name_handler,
         ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.create_customer
     ),
     Window(
@@ -231,6 +292,7 @@ order_dialog = Dialog(
             on_success=correct_phone_handler,
             on_error=incorrect_phone_handler,
         ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.create_customer_phone
     ),
     Window(
@@ -241,6 +303,7 @@ order_dialog = Dialog(
             on_success=correct_address_handler,
             on_error=incorrect_address_handler,
         ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.create_customer_address
     ),
     Window(
@@ -268,6 +331,7 @@ order_dialog = Dialog(
             on_success=correct_model_handler,
             on_error=incorrect_model_handler,
         ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.model_item
 
     ),
@@ -279,6 +343,7 @@ order_dialog = Dialog(
             on_success=correct_defect_handler,
             on_error=incorrect_defect_handler,
         ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.defect
 
     ),
@@ -305,6 +370,34 @@ order_dialog = Dialog(
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.user_choice,
         getter=user_getter
+    ),
+    Window(
+        Const('Напишите название организации, Фамилию или номер телефона клиента'),
+        TextInput(
+            id='customer_choice_text',
+            type_factory=name_phone_check,
+            on_success=correct_customer_handler,
+            on_error=incorrect_customer_handler,
+        ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.input_customer_name
+    ),
+    Window(
+        Const('Выберите клиента'),
+        ScrollingGroup(Select(
+            Format('{item[0]}'),
+            id='user',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=select_customer
+        ),
+            id="elems",
+            width=3,
+            height=8
+        ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.choice_customer_button,
+        getter=customers_getter
     )
 
 )
