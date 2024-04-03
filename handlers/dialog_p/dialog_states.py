@@ -26,3 +26,5 @@ class Order(StatesGroup):
     user_choice = State()
     input_customer_name = State()
     choice_customer_button = State()
+    find_order = State()
+    order_action = State()

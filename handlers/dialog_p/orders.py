@@ -7,10 +7,11 @@ from aiogram_dialog.widgets.kbd import Button, Select, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format
 
 from actions_base.actions_customers import CustomerActions
+from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from handlers.dialog_p import dialog_base_def
 from handlers.dialog_p.dialog_states import Order
-from models.models import Vendor, Customers
+from models.models import Vendor, Customers, Orders
 from permission import is_owner_admin, is_user
 from utils import CreateOrderFull
 
@@ -24,7 +25,6 @@ async def vendor_getter(dialog_manager: DialogManager, event_from_user: User, **
 
 async def user_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
     user_from_event = await UserActions.get_user(event_from_user)
-
     if await is_owner_admin(user_from_event):
         users = await UserActions.get_all_users()
         list_user = []
@@ -42,6 +42,17 @@ async def customers_getter(dialog_manager: DialogManager, event_from_user: User,
     for customer in customers:
         customer_list.append((customer.fullname, customer.id))
     return {'elems': customer_list}
+
+
+async def orders_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
+    order_list = []
+    orders: list[Orders] = dialog_manager.dialog_data.get('orders')
+    for order in orders:
+        if order.customer is None:
+            order_list.append((f'{order.id}', order.id))
+        else:
+            order_list.append((f'{order.id}-{order.customer.fullname}', order.id))
+    return {'elems': order_list}
 
 
 async def create_order(callback: CallbackQuery, widget: Button,
@@ -93,6 +104,11 @@ async def select_customer(callback: CallbackQuery, widget: Select,
 async def input_customer_name(callback: CallbackQuery, widget: Button,
                               dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.input_customer_name)
+
+
+async def find_order(callback: CallbackQuery, widget: Button,
+                     dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Order.find_order)
 
 
 def name_check(text: str):
@@ -195,6 +211,47 @@ async def correct_customer_handler(
         )
 
 
+async def correct_find_order_handler(message: Message,
+                                     widget: ManagedTextInput,
+                                     dialog_manager: DialogManager,
+                                     text: str) -> None:
+    if all(ch.isdigit() for ch in text):
+        orders = [await OrdersActions.get_order(int(text))]
+        if orders[0]:
+            dialog_manager.dialog_data["orders"] = orders
+            await dialog_manager.switch_to(Order.order_action)
+        else:
+            customer = await CustomerActions.get_customer_by_phone(int(text))
+            if customer:
+                orders = await OrdersActions.get_all_orders_to_customer(customer.id)
+                dialog_manager.dialog_data["orders"] = orders
+                await dialog_manager.switch_to(Order.order_action)
+                # await dialog_manager.switch_to(Order.order_start)
+            else:
+                await message.answer(
+                    text=f"По этому '{text}' номеру клиентов и заказов не найдено.\nПопробуйте ещё раз!")
+                await dialog_manager.switch_to(Order.find_order)
+    else:
+        customer = await CustomerActions.get_customers_for_fullname(text)
+        if customer:
+            orders = await OrdersActions.get_all_orders_to_customer(customer[0].id)
+            dialog_manager.dialog_data["orders"] = orders
+            await dialog_manager.switch_to(Order.order_action)
+        else:
+            await message.answer(text=f"По этому '{text}' имени клиентов и заказов не найдено.\nПопробуйте ещё раз!")
+            await dialog_manager.switch_to(Order.find_order)
+
+
+async def incorrect_find_order_handler(
+        message: Message,
+        widget: ManagedTextInput,
+        dialog_manager: DialogManager,
+        error: ValueError):
+    await message.answer(
+        text='Вы ввели что-то не то. Попробуйте еще раз'
+    )
+
+
 async def incorrect_customer_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -259,7 +316,7 @@ order_dialog = Dialog(
     Window(
         Const('Операции с Заказами'),
         Button(Const('Создать заказ'), id='create_order_button', on_click=create_order),
-        Button(Const('Найти заказ'), id='find_order_button'),
+        Button(Const('Найти заказ'), id='find_order_button', on_click=find_order),
         Button(Const('Мои заказы'), id='cancel_button'),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
 
@@ -398,6 +455,35 @@ order_dialog = Dialog(
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.choice_customer_button,
         getter=customers_getter
-    )
+    ),
+    Window(
+        Const('Напишите название организации, Фамилию,  номер телефона клиента'),
+        TextInput(
+            id='customer_choice_text',
+            type_factory=name_phone_check,
+            on_success=correct_find_order_handler,
+            on_error=incorrect_find_order_handler,
+        ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.find_order
+    ),
+    Window(
+        Const('Выберите заказ'),
+        ScrollingGroup(Select(
+            Format('{item[0]}'),
+            id='user',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=select_customer
+        ),
+            id="elems",
+            width=3,
+            height=8
+        ),
+        Button(Const('Назад'), id='back_7', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.order_action,
+        getter=orders_getter
+    ),
 
 )

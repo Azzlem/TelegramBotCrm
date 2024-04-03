@@ -172,7 +172,9 @@ class OrdersActions:
         async with async_session_maker() as db:
             if not customer_id:
                 return False
-            orders = await db.execute(select(Orders).where(Orders.customer_id == customer_id))
+            orders = await db.execute(select(Orders).where(Orders.customer_id == customer_id).
+                                      options(selectinload(cls.model.customer)).
+                                      options(selectinload(cls.model.items)))
             orders = orders.scalars().all()
             if not isinstance(orders, list):
                 return [orders]
