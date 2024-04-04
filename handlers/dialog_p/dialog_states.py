@@ -28,3 +28,4 @@ class Order(StatesGroup):
     choice_customer_button = State()
     find_order = State()
     order_action = State()
+    actions_choice_orders = State()

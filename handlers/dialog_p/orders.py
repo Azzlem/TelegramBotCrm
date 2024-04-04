@@ -17,9 +17,7 @@ from utils import CreateOrderFull
 
 
 async def vendor_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
-    vendor_list = []
-    for vendor in Vendor:
-        vendor_list.append((vendor.name, vendor.name))
+    vendor_list = [(vendor.name, vendor.name) for vendor in Vendor]
     return {'elems': vendor_list}
 
 
@@ -27,20 +25,17 @@ async def user_getter(dialog_manager: DialogManager, event_from_user: User, **kw
     user_from_event = await UserActions.get_user(event_from_user)
     if await is_owner_admin(user_from_event):
         users = await UserActions.get_all_users()
-        list_user = []
-        for user in users:
-            list_user.append((user.fullname, user.id))
-        list_user.append(("Не назначать", None))
-        return {'elems': list_user}
+        list_user = [(user.fullname, user.id) for user in users] + [("Не назначать", None)]
     elif await is_user(user_from_event):
-        return {'elems': [(user_from_event.fullname, user_from_event.id)]}
+        list_user = [(user_from_event.fullname, user_from_event.id)]
+    else:
+        list_user = []
+    return {'elems': list_user}
 
 
 async def customers_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
-    customer_list = []
     customers: list[Customers] = dialog_manager.dialog_data.get('customers_model')
-    for customer in customers:
-        customer_list.append((customer.fullname, customer.id))
+    customer_list = [(customer.fullname, customer.id) for customer in customers]
     return {'elems': customer_list}
 
 
@@ -109,6 +104,55 @@ async def input_customer_name(callback: CallbackQuery, widget: Button,
 async def find_order(callback: CallbackQuery, widget: Button,
                      dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.find_order)
+
+
+async def actions_orders(callback: CallbackQuery, widget: Button,
+                         dialog_manager: DialogManager, item_id: str):
+    dialog_manager.dialog_data['order_id'] = int(item_id)
+    await dialog_manager.switch_to(Order.actions_choice_orders)
+
+
+async def order_details(callback: CallbackQuery, widget: Button,
+                        dialog_manager: DialogManager):
+    order: Orders = await OrdersActions.get_all_info_order_users(int(dialog_manager.dialog_data.get('order_id')))
+    items = "\n".join(f'{item.vendor.name} - {item.model}' for item in order.items)
+    comments = "\n".join(comment.text for comment in order.comments)
+    components = "\n".join(f"{component.name} - {component.price}" for component in order.components)
+    spending = sum(component.price for component in order.components)
+    comments_formatted = "\n".join(f"{i + 1}. {comment}" for i, comment in enumerate(comments.split("\n")))
+
+    await callback.message.answer(
+        text=f"""
+        <b>Заказ номер:</b> {order.id}
+
+        <b>Клиент:</b> {order.customer.fullname}
+        <b>Телефон:</b> {order.customer.phone}
+        <b>Адрес:</b> {order.customer.address}
+
+        <b>Инженер:</b> {order.user.fullname}
+
+        <b>Техника:</b>
+        {items}
+
+...
+
+<b>Коментарии по заказу:</b>
+
+{comments_formatted}
+
+...
+...
+
+<b>Запчасти в заказе:</b>
+{'' if components == '' else components}
+
+...
+        <b>Затраты:</b> {spending}
+        <b>Оплачено:</b> {order.price}
+        <b>Прибыль:</b> {order.price - spending}
+        """,
+        parse_mode="HTML"
+    )
 
 
 def name_check(text: str):
@@ -226,7 +270,6 @@ async def correct_find_order_handler(message: Message,
                 orders = await OrdersActions.get_all_orders_to_customer(customer.id)
                 dialog_manager.dialog_data["orders"] = orders
                 await dialog_manager.switch_to(Order.order_action)
-                # await dialog_manager.switch_to(Order.order_start)
             else:
                 await message.answer(
                     text=f"По этому '{text}' номеру клиентов и заказов не найдено.\nПопробуйте ещё раз!")
@@ -474,7 +517,7 @@ order_dialog = Dialog(
             id='user',
             item_id_getter=lambda x: x[1],
             items='elems',
-            on_click=select_customer
+            on_click=actions_orders
         ),
             id="elems",
             width=3,
@@ -485,5 +528,13 @@ order_dialog = Dialog(
         state=Order.order_action,
         getter=orders_getter
     ),
-
+    Window(
+        Const('Выбранный вами заказ'),
+        Button(Const('Подробности'), id='button_start', on_click=order_details),
+        Button(Const('Добавить запчасть'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Добавить коментарий'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Закрыть заказ'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.actions_choice_orders
+    ),
 )
