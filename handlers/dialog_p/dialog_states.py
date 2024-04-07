@@ -29,3 +29,6 @@ class Order(StatesGroup):
     find_order = State()
     order_action = State()
     actions_choice_orders = State()
+    create_component_photo = State()
+    create_component_name = State()
+    create_component_price = State()

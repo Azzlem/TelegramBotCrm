@@ -15,8 +15,10 @@ async def dowmload_image(message, bot):
     photo = message.photo[-1]  # Берем самое последнее фото
     # Получаем идентификатор файла фото
     file_id = photo.file_id
+
     # Получаем информацию о файле фото
     file_info = await bot.get_file(file_id)
+
     # Получаем путь для сохранения фото
     photo_path = os.path.join(PHOTO_FOLDER_PATH, f'{file_id}.jpg')
     # Скачиваем фото по ссылке
@@ -74,6 +76,3 @@ class CreateOrderFull:
         except:
             logger.add("logs/file_{time}.json", rotation="weekly")
             logger.exception("What?!")
-
-
-

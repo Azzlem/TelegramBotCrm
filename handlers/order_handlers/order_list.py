@@ -92,8 +92,6 @@ async def callback_query_component_order(callback: CallbackQuery, state: FSMCont
 
 @router.message(StateFilter(FormListOrderForStatus.component), F.photo[-1].as_('largest_photo'))
 async def callback_query_component_order(message: Message, state: FSMContext, largest_photo: PhotoSize, bot: Bot):
-    print(PHOTO_FOLDER_PATH)
-    print(os.getcwd())
     try:
         path_file = await dowmload_image(message, bot)
         await state.update_data(path_photo=path_file)

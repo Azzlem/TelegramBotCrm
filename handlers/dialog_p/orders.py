@@ -1,11 +1,15 @@
 import re
 
+
+from aiogram.enums import ContentType
 from aiogram.types import CallbackQuery, Message, User
 from aiogram_dialog import Dialog, Window, DialogManager, StartMode
-from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
+from aiogram_dialog.widgets.input import TextInput, ManagedTextInput, MessageInput
 from aiogram_dialog.widgets.kbd import Button, Select, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format
 
+
+from actions_base.actions_components import ComponentActions
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
@@ -13,7 +17,7 @@ from handlers.dialog_p import dialog_base_def
 from handlers.dialog_p.dialog_states import Order
 from models.models import Vendor, Customers, Orders
 from permission import is_owner_admin, is_user
-from utils import CreateOrderFull
+from utils import CreateOrderFull, dowmload_image
 
 
 async def vendor_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs):
@@ -156,6 +160,17 @@ async def order_details(callback: CallbackQuery, widget: Button,
     # await dialog_manager.switch_to(Order.actions_choice_orders)
 
 
+async def send_photo(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Order.create_component_photo)
+
+
+async def get_photo_handler(message: Message, widget: MessageInput, dialog_manager: DialogManager):
+    bot = dialog_manager.middleware_data.get('bot')
+    url = await dowmload_image(message, bot)
+    dialog_manager.dialog_data['path_photo'] = url
+    await dialog_manager.switch_to(Order.create_component_name)
+
+
 def name_check(text: str):
     if all(ch.isdigit() for ch in text):
         raise ValueError
@@ -191,6 +206,12 @@ def defect_check(text: str):
     if all(ch.isdigit() for ch in text):
         raise ValueError
     return text
+
+
+def price_check(text: str):
+    if all(ch.isdigit() for ch in text):
+        return text
+    raise ValueError
 
 
 async def correct_name_handler(
@@ -284,6 +305,31 @@ async def correct_find_order_handler(message: Message,
         else:
             await message.answer(text=f"По этому '{text}' имени клиентов и заказов не найдено.\nПопробуйте ещё раз!")
             await dialog_manager.switch_to(Order.find_order)
+
+
+async def correct_component_name_handler(message: Message,
+                                         widget: ManagedTextInput,
+                                         dialog_manager: DialogManager,
+                                         text: str) -> None:
+    dialog_manager.dialog_data["name"] = text
+    await dialog_manager.switch_to(Order.create_component_price)
+
+
+async def correct_component_price_handler(message: Message,
+                                          widget: ManagedTextInput,
+                                          dialog_manager: DialogManager,
+                                          text: str) -> None:
+    dialog_manager.dialog_data["price"] = text
+    await ComponentActions.create(
+        dialog_manager.dialog_data.get('name'),
+        dialog_manager.dialog_data.get('path_photo'),
+        int(dialog_manager.dialog_data.get('order_id')),
+        int(dialog_manager.dialog_data.get('price')),
+    )
+    await message.answer(
+        text="Запчасть успешно добавлена"
+    )
+    await dialog_manager.switch_to(Order.actions_choice_orders)
 
 
 async def incorrect_find_order_handler(
@@ -532,11 +578,45 @@ order_dialog = Dialog(
     Window(
         Const('Выбранный вами заказ'),
         Button(Const('Подробности'), id='button_detail_order', on_click=order_details),
-        Button(Const('Добавить запчасть'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Добавить запчасть'), id='send_photo', on_click=send_photo),
         Button(Const('Добавить коментарий'), id='button_start', on_click=dialog_base_def.go_start),
         Button(Const('Закрыть заказ'), id='button_start', on_click=dialog_base_def.go_start),
         Button(Const('Назад'), id='back_8', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.actions_choice_orders
+    ),
+    Window(
+        Const('фото чека'),
+        MessageInput(
+            func=get_photo_handler,
+            content_types=ContentType.PHOTO,
+        ),
+        Button(Const('Назад'), id='back_9', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.create_component_photo
+    ),
+    Window(
+        Const('Напишите название запчасти'),
+        TextInput(
+            id='component_name',
+            type_factory=name_check,
+            on_success=correct_component_name_handler,
+            on_error=incorrect_find_order_handler,
+        ),
+        Button(Const('Назад'), id='back_10', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.create_component_name
+    ),
+    Window(
+        Const('Напишите цену'),
+        TextInput(
+            id='component_name',
+            type_factory=price_check,
+            on_success=correct_component_price_handler,
+            on_error=incorrect_find_order_handler,
+        ),
+        Button(Const('Назад'), id='back_11', on_click=dialog_base_def.go_back),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.create_component_price
     ),
 )
