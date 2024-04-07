@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from actions_base.actions_users import UserActions
+from dataclass import DataClass
 from keybords.keyboards import keyboard_list_user
 from permission import is_owner
 from states.states_user import FormDeleteUser

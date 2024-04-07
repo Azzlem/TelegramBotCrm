@@ -110,7 +110,7 @@ async def no_user_callback(callback: CallbackQuery, state: FSMContext):
     data = DataObject(data=data)
     try:
         if data.customer_id is None:
-            customer = await CustomerActions.add_customer_in_orger(data.fullname, data.phone, data.address)
+            customer = await CustomerActions.add_customer_in_order(data.fullname, data.phone, data.address)
         else:
             customer = await CustomerActions.get_customer(data.customer_id)
         order = await OrdersActions.create_orders_without_user(customer.id)
@@ -139,11 +139,11 @@ async def user_id_callback(callback: CallbackQuery, state: FSMContext, bot: Bot)
     data = DataObject(data=data)
     try:
         if data.customer_id is None:
-            customer = await CustomerActions.add_customer_in_orger(data.fullname, data.phone, data.address)
+            customer = await CustomerActions.add_customer_in_order(data.fullname, data.phone, data.address)
         else:
             customer = await CustomerActions.get_customer(data.customer_id)
         user = await UserActions.get_user_from_id(data)
-        order = await OrdersActions.create_order(customer.id, data.user_id)
+        order = await OrdersActions.create_order(customer.id, int(data.user_id))
         item = await ItemsActions.add_item_to_order(data.vendor, data.model, data.defect, order.id)
         await callback.message.answer(
             text=f"{customer.fullname} - {order.id} - {item.id}"

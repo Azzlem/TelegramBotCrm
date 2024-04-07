@@ -6,6 +6,7 @@ from handlers.dialog_p.dialog_states import Menu
 
 
 async def go_start(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await callback.message.delete()
     await dialog_manager.start(state=Menu.menu, mode=StartMode.RESET_STACK)
 
 

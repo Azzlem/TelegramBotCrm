@@ -129,10 +129,10 @@ async def order_details(callback: CallbackQuery, widget: Button,
         <b>Телефон:</b> {order.customer.phone}
         <b>Адрес:</b> {order.customer.address}
 
-        <b>Инженер:</b> {order.user.fullname}
+        <b>Инженер:</b> {order.user.fullname if order.user else "Не назначен"}
 
         <b>Техника:</b>
-        {items}
+        {items if order.items else "Без техники"}
 
 ...
 
@@ -144,15 +144,16 @@ async def order_details(callback: CallbackQuery, widget: Button,
 ...
 
 <b>Запчасти в заказе:</b>
-{'' if components == '' else components}
+        {'' if components == '' else components}
 
-...
+        ...
         <b>Затраты:</b> {spending}
         <b>Оплачено:</b> {order.price}
         <b>Прибыль:</b> {order.price - spending}
         """,
         parse_mode="HTML"
     )
+    # await dialog_manager.switch_to(Order.actions_choice_orders)
 
 
 def name_check(text: str):
@@ -530,10 +531,11 @@ order_dialog = Dialog(
     ),
     Window(
         Const('Выбранный вами заказ'),
-        Button(Const('Подробности'), id='button_start', on_click=order_details),
+        Button(Const('Подробности'), id='button_detail_order', on_click=order_details),
         Button(Const('Добавить запчасть'), id='button_start', on_click=dialog_base_def.go_start),
         Button(Const('Добавить коментарий'), id='button_start', on_click=dialog_base_def.go_start),
         Button(Const('Закрыть заказ'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Назад'), id='back_8', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.actions_choice_orders
     ),

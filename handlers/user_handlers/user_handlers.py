@@ -2,6 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from actions_base.actions_users import UserActions
+from dataclass import DataClass
 from formatting.user_formatting import UserFormatter
 from permission import is_owner_admin
 

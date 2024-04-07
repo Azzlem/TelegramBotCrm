@@ -1,36 +1,39 @@
+from typing import List, Type, Any
+
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
-from base import async_session_maker
+from base import async_session_maker, Base
+from models.enums import Status
 from models.models import Orders, Users
-from permission import is_owner_admin
+from permission import is_owner_admin, is_user
 
 
 class OrdersActions:
     model = Orders
 
     @classmethod
-    async def add_orders(cls, data):
+    async def add_orders(cls, data: dict) -> Orders:
         async with async_session_maker() as session:
-            order = Orders(**data)
+            order = cls.model(**data)
             session.add(order)
             await session.commit()
             return order
 
     @classmethod
-    async def create_order(cls, customer_id, user_id):
+    async def create_order(cls, customer_id: int, user_id: int) -> Orders:
         async with async_session_maker() as session:
             if user_id == "None":
                 order = Orders(customer_id=customer_id)
             else:
-                order = Orders(customer_id=customer_id, user_id=int(user_id))
+                order = Orders(customer_id=customer_id, user_id=user_id)
 
             session.add(order)
             await session.commit()
             return order
 
     @classmethod
-    async def create_orders_without_user(cls, customer_id):
+    async def create_orders_without_user(cls, customer_id: int) -> Orders:
         async with async_session_maker() as session:
             order = Orders(customer_id=customer_id)
             session.add(order)
@@ -38,91 +41,62 @@ class OrdersActions:
             return order
 
     @classmethod
-    async def get_orders(cls, data):
+    async def get_orders_with_customer(cls, user: Users) -> List[Orders]:
         async with async_session_maker() as db:
-            orders = await db.execute(select(Orders).where(Orders.user_id == data.id))
+            orders = await db.execute(select(cls.model).where(cls.model.user_id == user.id).
+                                      options(selectinload(cls.model.customer)))
             orders = orders.scalars().all()
             return orders
 
     @classmethod
-    async def get_orders_with_customer(cls, data):
+    async def get_all_orders(cls) -> List[Orders]:
         async with async_session_maker() as db:
-            orders = await db.execute(select(Orders).where(
-                Orders.user_id == data.id
-            ).options(selectinload(cls.model.customer)))
+            orders = await db.execute(select(cls.model))
             orders = orders.scalars().all()
             return orders
 
     @classmethod
-    async def get_all_orders(cls):
+    async def get_all_orders_with_customer(cls) -> List[Orders]:
         async with async_session_maker() as db:
-            orders = await db.execute(select(Orders))
+            orders = await db.execute(select(cls.model).
+                                      options(selectinload(cls.model.customer)))
             orders = orders.scalars().all()
             return orders
 
     @classmethod
-    async def get_all_orders_with_customer(cls):
+    async def get_all_orders_accepted(cls, user: Users, status: Status) -> List[Orders]:
         async with async_session_maker() as db:
-            orders = await db.execute(select(Orders).options(selectinload(cls.model.customer)))
-            orders = orders.scalars().all()
-            return orders
+            query = select(cls.model).filter_by(status=status)
+            if await is_owner_admin(user):
+                query = query.options(selectinload(cls.model.customer)).options(selectinload(cls.model.items))
+            else:
+                query = query.filter_by(user_id=user.id).options(selectinload(cls.model.customer)).options(
+                    selectinload(cls.model.items))
+            orders = await db.execute(query)
+            return orders.scalars().all()
 
     @classmethod
-    async def get_all_orders_with_all_info(cls):
-        async with async_session_maker() as db:
-            orders = await db.execute(select(Orders).
-                                      options(selectinload(cls.model.customer)).
-                                      options(selectinload(cls.model.user)).
-                                      options(selectinload(cls.model.items)).
-                                      options(selectinload(cls.model.components)))
-            orders = orders.scalars().all()
-            return orders
-
-    @classmethod
-    async def get_all_orders_with_all_info_for_id(cls, data):
-        async with async_session_maker() as db:
-            user = await db.execute(select(Users).filter_by(telegram_id=data.id))
-            user = user.scalars().first()
-            orders = await db.execute(select(Orders).filter_by(user_id=user.id).
-                                      options(selectinload(cls.model.customer)).
-                                      options(selectinload(cls.model.user)).
-                                      options(selectinload(cls.model.items)).
-                                      options(selectinload(cls.model.components)))
-            orders = orders.scalars().all()
-            return orders
-
-    @classmethod
-    async def get_all_orders_accepted(cls, user, status):
-        async with async_session_maker() as db:
-            print(user.username)
-            if is_owner_admin(user):
-                orders = await db.execute(select(Orders).filter_by(status=status).
-                                          options(selectinload(cls.model.customer)).
-                                          options(selectinload(cls.model.items)))
-            elif user:
-                orders = await db.execute(select(Orders).filter_by(user_id=user.id).filter_by(status=status).
-                                          options(selectinload(cls.model.customer)).
-                                          options(selectinload(cls.model.items)))
-            orders = orders.scalars().all()
-            return orders
-
-    @classmethod
-    async def appoint_user_to_order(cls, user_id, order_id):
+    async def appoint_user_to_order(cls, user_id: int, order_id: int) -> bool:
         async with async_session_maker() as db:
             if not user_id:
                 return False
-            else:
-                await db.execute(update(Orders).where(Orders.id == order_id).values(user_id=user_id))
+            try:
+                await db.execute(
+                    update(cls.model).where(cls.model.id == order_id).values(user_id=user_id)
+                )
                 await db.commit()
                 return True
+            except Exception as e:
+                # Логирование или обработка исключения
+                raise e
 
     @classmethod
-    async def get_order(cls, order_id):
+    async def get_order(cls, order_id: int) -> bool | Any:
         async with async_session_maker() as db:
             if not order_id:
                 return False
             else:
-                order = await db.execute(select(Orders).where(Orders.id == order_id).
+                order = await db.execute(select(cls.model).where(cls.model.id == order_id).
                                          options(selectinload(cls.model.customer)).
                                          options(selectinload(cls.model.items))
                                          )
@@ -130,22 +104,21 @@ class OrdersActions:
                 return order
 
     @classmethod
-    async def status_order(cls, status, order_id):
+    async def status_order(cls, status: Status, order_id: int) -> bool:
         async with async_session_maker() as db:
             if not order_id or not status:
                 return False
             else:
-                await db.execute(update(Orders).where(Orders.id == order_id).values(status=status))
-
+                await db.execute(update(cls.model).where(cls.model.id == order_id).values(status=status))
                 await db.commit()
                 return True
 
     @classmethod
-    async def get_all_info_order(cls, order_id):
+    async def get_all_info_order(cls, order_id: int) -> List[Orders] | Any:
         async with async_session_maker() as db:
             if not order_id:
                 return False
-            order = await db.execute(select(Orders).where(Orders.id == order_id).
+            order = await db.execute(select(cls.model).where(cls.model.id == order_id).
                                      options(selectinload(cls.model.customer)).
                                      options(selectinload(cls.model.items)).
                                      options(selectinload(cls.model.components)).
@@ -154,11 +127,11 @@ class OrdersActions:
             return order
 
     @classmethod
-    async def get_all_info_order_users(cls, order_id):
+    async def get_all_info_order_users(cls, order_id: int) -> List[Users] | Any:
         async with async_session_maker() as db:
             if not order_id:
                 return False
-            order = await db.execute(select(Orders).where(Orders.id == order_id).
+            order = await db.execute(select(cls.model).where(cls.model.id == order_id).
                                      options(selectinload(cls.model.customer)).
                                      options(selectinload(cls.model.items)).
                                      options(selectinload(cls.model.components)).
@@ -168,11 +141,11 @@ class OrdersActions:
             return order
 
     @classmethod
-    async def get_all_orders_to_customer(cls, customer_id):
+    async def get_all_orders_to_customer(cls, customer_id: int) -> List[Orders] | Any:
         async with async_session_maker() as db:
             if not customer_id:
                 return False
-            orders = await db.execute(select(Orders).where(Orders.customer_id == customer_id).
+            orders = await db.execute(select(cls.model).where(cls.model.customer_id == customer_id).
                                       options(selectinload(cls.model.customer)).
                                       options(selectinload(cls.model.items)))
             orders = orders.scalars().all()

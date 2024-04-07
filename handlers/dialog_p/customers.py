@@ -122,7 +122,7 @@ async def error_phone_fio_handler(
         message: Message,
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
-        text: str):
+        error: ValueError):
     await message.answer(
         text='Вы ввели некорректный номер. Попробуйте еще раз'
     )

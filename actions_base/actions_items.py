@@ -6,7 +6,7 @@ class ItemsActions:
     model = Items
 
     @classmethod
-    async def add_item(cls, data):
+    async def add_item(cls, data: dict) -> Items:
         item = cls.model(**data)
         async with async_session_maker() as db:
             db.add(item)
@@ -14,7 +14,7 @@ class ItemsActions:
             return item
 
     @classmethod
-    async def add_item_to_order(cls, vendor, model, defect, order_id):
+    async def add_item_to_order(cls, vendor: str, model: str, defect: str, order_id: int) -> Items:
         async with async_session_maker() as db:
             item = cls.model(vendor=vendor, model=model, defect=defect, order_id=order_id)
             db.add(item)
