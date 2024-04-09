@@ -15,35 +15,30 @@ from handlers.dialog_p.correct_handler_order import correct_name_handler, correc
     correct_find_order_handler, correct_component_name_handler, correct_component_price_handler, \
     correct_comment_text_handler
 from handlers.dialog_p.dialog_states import Order
-from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter
+from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter, status_getter
 from handlers.dialog_p.utils import format_text
 from models.models import Orders
 from utils import CreateOrderFull, dowmload_image
 
 
-async def create_order(callback: CallbackQuery, widget: Button,
-                       dialog_manager: DialogManager):
+async def create_order(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.create_order)
 
 
-async def create_customer(callback: CallbackQuery, widget: Button,
-                          dialog_manager: DialogManager):
+async def create_customer(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.create_customer)
 
 
-async def select_vendor(callback: CallbackQuery, widget: Select,
-                        dialog_manager: DialogManager, item_id: str):
+async def select_vendor(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
     dialog_manager.dialog_data['vendor'] = item_id
     await dialog_manager.switch_to(Order.model_item)
 
 
-async def user_choice(callback: CallbackQuery, widget: Button,
-                      dialog_manager: DialogManager):
+async def user_choice(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.user_choice)
 
 
-async def select_user(callback: CallbackQuery, widget: Select,
-                      dialog_manager: DialogManager, item_id: str):
+async def select_user(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
     dialog_manager.dialog_data['user'] = item_id
     if not dialog_manager.dialog_data.get('customer'):
         customer = await CreateOrderFull.create_customer(data=dialog_manager.dialog_data, customer=None)
@@ -60,71 +55,45 @@ async def select_user(callback: CallbackQuery, widget: Select,
     await dialog_manager.start(Order.order_start, mode=StartMode.RESET_STACK)
 
 
-async def select_customer(callback: CallbackQuery, widget: Select,
-                          dialog_manager: DialogManager, item_id: str):
+async def select_status(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
+    if item_id == "exit":
+        await dialog_manager.switch_to(Order.actions_choice_orders)
+    else:
+        dialog_manager.dialog_data['status_order'] = item_id
+
+        await OrdersActions.status_order(
+            dialog_manager.dialog_data.get('status_order'),
+            int(dialog_manager.dialog_data.get('order_id')),
+        )
+        await dialog_manager.switch_to(Order.actions_choice_orders)
+
+
+async def select_customer(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
     customer = await CustomerActions.get_customer(int(item_id))
     dialog_manager.dialog_data['customer'] = customer
     await dialog_manager.switch_to(Order.choice_vendor)
 
 
-async def input_customer_name(callback: CallbackQuery, widget: Button,
-                              dialog_manager: DialogManager):
+async def input_customer_name(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.input_customer_name)
 
 
-async def find_order(callback: CallbackQuery, widget: Button,
-                     dialog_manager: DialogManager):
+async def find_order(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(Order.find_order)
 
 
-async def actions_orders(callback: CallbackQuery, widget: Button,
-                         dialog_manager: DialogManager, item_id: str):
+async def actions_orders(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager, item_id: str):
     dialog_manager.dialog_data['order_id'] = int(item_id)
     await dialog_manager.switch_to(Order.actions_choice_orders)
 
 
-async def order_details(callback: CallbackQuery, widget: Button,
-                        dialog_manager: DialogManager):
+async def order_details(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
     order: Orders = await OrdersActions.get_all_info_order_users(int(dialog_manager.dialog_data.get('order_id')))
-    items = "\n".join(f'{item.vendor.name} - {item.model}' for item in order.items)
-    comments = "\n".join(comment.text for comment in order.comments)
-    components = "\n".join(f"{component.name} - {component.price}" for component in order.components)
-    spending = sum(component.price for component in order.components)
-    comments_formatted = "\n".join(f"{i + 1}. {comment}" for i, comment in enumerate(comments.split("\n")))
-    await format_text(order)
+    text = await format_text(order)
     await callback.message.answer(
-        text=f"""
-        <b>Заказ номер:</b> {order.id}
-
-        <b>Клиент:</b> {order.customer.fullname}
-        <b>Телефон:</b> {order.customer.phone}
-        <b>Адрес:</b> {order.customer.address}
-
-        <b>Инженер:</b> {order.user.fullname if order.user else "Не назначен"}
-
-        <b>Техника:</b>
-        {items if order.items else "Без техники"}
-
-...
-
-<b>Коментарии по заказу:</b>
-
-{comments_formatted}
-
-...
-...
-
-<b>Запчасти в заказе:</b>
-        {'' if components == '' else components}
-
-        ...
-        <b>Затраты:</b> {spending}
-        <b>Оплачено:</b> {order.price}
-        <b>Прибыль:</b> {order.price - spending}
-        """,
+        text=text,
         parse_mode="HTML"
     )
-    # await dialog_manager.switch_to(Order.actions_choice_orders)
 
 
 async def send_photo(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
@@ -135,6 +104,10 @@ async def send_comment(callback: CallbackQuery, widget: Button, dialog_manager: 
     await dialog_manager.switch_to(Order.create_comments)
 
 
+async def send_status(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
+    await dialog_manager.switch_to(Order.send_status)
+
+
 async def get_photo_handler(message: Message, widget: MessageInput, dialog_manager: DialogManager):
     bot = dialog_manager.middleware_data.get('bot')
     url = await dowmload_image(message, bot)
@@ -142,11 +115,8 @@ async def get_photo_handler(message: Message, widget: MessageInput, dialog_manag
     await dialog_manager.switch_to(Order.create_component_name)
 
 
-async def incorrect_handler(
-        message: Message,
-        widget: ManagedTextInput,
-        dialog_manager: DialogManager,
-        error: ValueError):
+async def incorrect_handler(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
+                            error: ValueError):
     await message.answer(
         text='Вы ввели что-то не то. Попробуйте еще раз'
     )
@@ -330,7 +300,7 @@ order_dialog = Dialog(
         Button(Const('Подробности'), id='button_detail_order', on_click=order_details),
         Button(Const('Добавить запчасть'), id='send_photo', on_click=send_photo),
         Button(Const('Добавить коментарий'), id='send_comment', on_click=send_comment),
-        Button(Const('Закрыть заказ'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Изменить статус заказа'), id='send_status', on_click=send_status),
         Button(Const('Назад'), id='back_8', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.actions_choice_orders
@@ -380,5 +350,22 @@ order_dialog = Dialog(
         Button(Const('Назад'), id='back_12', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.create_comments
+    ),
+    Window(
+        Const('Выберите статус'),
+        ScrollingGroup(Select(
+            Format('{item[0]}'),
+            id='user',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=select_status
+        ),
+            id="elems",
+            width=2,
+            height=8
+        ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=Order.send_status,
+        getter=status_getter
     ),
 )
