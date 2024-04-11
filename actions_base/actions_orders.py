@@ -153,3 +153,17 @@ class OrdersActions:
                 return [orders]
             else:
                 return orders
+
+    @classmethod
+    async def get_all_my_orders(cls, user: Users) -> List[Orders] | Any:
+        async with async_session_maker() as db:
+            if not user:
+                return False
+            orders = await db.execute(select(cls.model).where(cls.model.user_id == user.id).
+                                      options(selectinload(cls.model.customer)).
+                                      options(selectinload(cls.model.items)))
+            orders = orders.scalars().all()
+            if not isinstance(orders, list):
+                return [orders]
+            else:
+                return orders

@@ -1,9 +1,10 @@
 import os
+from typing import Callable
 
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, PhotoSize, InputFile, FSInputFile
+from aiogram.types import Message, CallbackQuery, PhotoSize, FSInputFile
 
 from actions_base.actions_comments import CommentActions
 from actions_base.actions_components import ComponentActions
@@ -14,7 +15,7 @@ from keybords.keyboard_list_orders import (keyboard_list_orders_status, keyboard
                                            keyboard_choice_options_to_order, keyboard_choice_user, keyboard_status_order
                                            )
 from models.enums import Status
-from permission import is_registered, is_owner_admin_user
+from models.models import Role
 from settings import PHOTO_FOLDER_PATH
 from states.states_orders import FormListOrderForStatus
 from utils import dowmload_image
@@ -22,16 +23,27 @@ from utils import dowmload_image
 router = Router()
 
 
+def decorator_permissions(func: Callable) -> Callable:
+    async def wrapper(message: Message, state: FSMContext):
+        user = await UserActions.get_user(message.from_user)
+        if user.role == Role.REGISTERED:
+            await message.answer("Обратитсь к администратору за активацией вашего профиля")
+        elif user.role not in (Role.ADMIN, Role.OWNER, Role.USER):
+            await message.answer("Доступ запрещён")
+        else:
+            await func(message, state)
+
+    return wrapper
+
+
 @router.message(Command(commands=["list"]))
+@decorator_permissions
 async def create_order(message: Message, state: FSMContext):
+    keyboard = await keyboard_list_orders_status()
     user = await UserActions.get_user(message.from_user)
-    if await is_registered(user):
-        await message.answer(text="Обратитсь к администратору за активацией вашего профиля")
-    elif await is_owner_admin_user(user):
-        keyboard = await keyboard_list_orders_status()
-        await message.answer(text="ВЫБРАТЬ СТАТУС ЗАКАЗА?", reply_markup=keyboard)
-        await state.set_state(FormListOrderForStatus.choise_status)
-        await state.update_data(user=user)
+    await message.answer(text="ВЫБРАТЬ СТАТУС ЗАКАЗА?", reply_markup=keyboard)
+    await state.set_state(FormListOrderForStatus.choise_status)
+    await state.update_data(user=user)
 
 
 @router.callback_query(StateFilter(FormListOrderForStatus.choise_status),

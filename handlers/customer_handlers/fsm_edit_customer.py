@@ -4,28 +4,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from actions_base.actions_customers import CustomerActions
-from actions_base.actions_users import UserActions
-from dataclass import DataClass
+from handlers.dialog_p.decorators import decorator_admin
 from keybords.keyboards import keyboard_choice_customer_edit, keyboard_customer_edit
-from permission import is_owner_admin
 from states.states_customer import FormUpdateCustomer
 
 router = Router()
 
 
 @router.message(Command(commands="customer_edit"))
+@decorator_admin
 async def customer_edit(message: Message, state: FSMContext):
-    user = await UserActions.get_user(message.from_user)
-    if await is_owner_admin(user):
-        keyboard = await keyboard_choice_customer_edit()
-        await message.answer(
-            text="Кого меняем?",
-            reply_markup=keyboard
-        )
-        await state.set_state(FormUpdateCustomer.id)
-    else:
-        await message.answer("У вас не на это прав")
-        await state.clear()
+    keyboard = await keyboard_choice_customer_edit()
+    await message.answer(text="Кого меняем?", reply_markup=keyboard)
+    await state.set_state(FormUpdateCustomer.id)
 
 
 @router.callback_query(StateFilter(FormUpdateCustomer.id))

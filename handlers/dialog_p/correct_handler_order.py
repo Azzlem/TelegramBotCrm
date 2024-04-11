@@ -8,7 +8,7 @@ from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from handlers.dialog_p.check_def import name_check, phone_check, address_check, model_check, defect_check
-from handlers.dialog_p.dialog_states import Order
+from handlers.dialog_p.dialog_states import Order, Component
 from models.models import Users
 
 
@@ -110,7 +110,7 @@ async def correct_component_name_handler(message: Message,
                                          dialog_manager: DialogManager,
                                          text: str) -> None:
     dialog_manager.dialog_data["name"] = text
-    await dialog_manager.switch_to(Order.create_component_price)
+    await dialog_manager.switch_to(Component.get_price)
 
 
 async def correct_component_price_handler(message: Message,
@@ -127,22 +127,5 @@ async def correct_component_price_handler(message: Message,
     await message.answer(
         text="Запчасть успешно добавлена"
     )
-    await dialog_manager.switch_to(Order.actions_choice_orders)
-
-
-async def correct_comment_text_handler(message: Message,
-                                       widget: ManagedTextInput,
-                                       dialog_manager: DialogManager,
-                                       text: str) -> None:
-    dialog_manager.dialog_data["text"] = text
-    user: Users = await UserActions.get_user(message.from_user)
-    await CommentActions.create(
-        text,
-        int(dialog_manager.dialog_data.get('order_id')),
-        int(user.id)
-    )
-    await message.answer(
-        text="Комментарий успешно добавлен"
-    )
-    await dialog_manager.switch_to(Order.actions_choice_orders)
+    await dialog_manager.done()
 

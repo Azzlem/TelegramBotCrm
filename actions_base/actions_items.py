@@ -1,3 +1,7 @@
+from typing import List
+
+from sqlalchemy import select
+
 from base import async_session_maker
 from models.models import Items, Vendor
 
@@ -20,3 +24,13 @@ class ItemsActions:
             db.add(item)
             await db.commit()
             return item
+
+    @classmethod
+    async def get_items_by_order_id(cls, order_id: int) -> List[Items]:
+        async with async_session_maker() as db:
+            items = await db.execute(select(cls.model).where(cls.model.order_id == order_id))
+            items = items.scalars().all()
+            if not isinstance(items, list):
+                return [items]
+            else:
+                return items

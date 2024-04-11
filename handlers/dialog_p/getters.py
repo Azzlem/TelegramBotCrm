@@ -3,10 +3,12 @@ from typing import Dict, List, Tuple
 from aiogram.types import User
 from aiogram_dialog import DialogManager
 
+from actions_base.actions_customers import CustomerActions
+from actions_base.actions_items import ItemsActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from models.enums import Status
-from models.models import Vendor, Customers, Orders, Users
+from models.models import Vendor, Customers, Orders, Users, Items
 from permission import is_owner_admin, is_user
 from settings import rus_name_status
 
@@ -55,3 +57,13 @@ async def status_getter(dialog_manager: DialogManager, event_from_user: User, **
     elif await is_owner_admin(user):
         status_list = [(text, status.name) for status, text in zip(Status, rus_name_status)]
         return {'elems': status_list}
+
+
+async def my_order_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs) -> Dict:
+    user: Users = await UserActions.get_user(event_from_user)
+    orders: List[Orders] = await OrdersActions.get_all_my_orders(user)
+    sorted_orders = sorted(orders, key=lambda order: order.id, reverse=True)
+    list_my_order = [(f'№{order.id}, Контрагент - {order.customer.fullname}', order.id) for order in sorted_orders if order.customer]
+    return {'elems': list_my_order}
+
+

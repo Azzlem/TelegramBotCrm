@@ -32,5 +32,16 @@ class Order(StatesGroup):
     create_component_photo = State()
     create_component_name = State()
     create_component_price = State()
-    create_comments = State()
     send_status = State()
+    get_my_orders = State()
+    my_order_actions = State()
+
+
+class Comment(StatesGroup):
+    get_comments = State()
+
+
+class Component(StatesGroup):
+    get_photo_receipt = State()
+    get_name = State()
+    get_price = State()

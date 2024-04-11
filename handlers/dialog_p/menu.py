@@ -7,9 +7,11 @@ from aiogram_dialog.widgets.text import Const, Format
 from loguru import logger
 
 from actions_base.actions_users import UserActions
+
 from handlers.dialog_p.customers import customer_dialog
+from handlers.dialog_p.decorators import decorator_permissions_menu
 from handlers.dialog_p.dialog_states import Menu, Customer, Order
-from handlers.dialog_p.orders import order_dialog
+from handlers.dialog_p.orders import order_dialog, dialog_comments, dialog_components
 
 router = Router()
 
@@ -51,9 +53,12 @@ setup_dialogs(router)
 router.include_router(menu_dialog)
 router.include_router(customer_dialog)
 router.include_router(order_dialog)
+router.include_router(dialog_comments)
+router.include_router(dialog_components)
 
 
 @router.message(Command("menu"))
+@decorator_permissions_menu
 async def start(message: Message, dialog_manager: DialogManager):
     try:
         await dialog_manager.start(Menu.menu, mode=StartMode.RESET_STACK)
