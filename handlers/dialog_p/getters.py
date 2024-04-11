@@ -46,6 +46,7 @@ async def orders_getter(dialog_manager: DialogManager, event_from_user: User, **
 
 
 async def status_getter(dialog_manager: DialogManager, event_from_user: User, **kwargs) -> Dict:
+    dialog_manager.dialog_data.update(dialog_manager.start_data)
     user: Users = await UserActions.get_user(event_from_user)
     rus_name_status_user = rus_name_status[2:6]
     order: Orders = await OrdersActions.get_order(int(dialog_manager.dialog_data.get('order_id')))

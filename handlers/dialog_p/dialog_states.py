@@ -45,3 +45,7 @@ class Component(StatesGroup):
     get_photo_receipt = State()
     get_name = State()
     get_price = State()
+
+
+class StatusOrder(StatesGroup):
+    get_status = State()

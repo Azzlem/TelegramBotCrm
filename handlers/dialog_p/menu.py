@@ -9,7 +9,7 @@ from loguru import logger
 from actions_base.actions_users import UserActions
 from handlers.dialog_p.customers import customer_dialog
 from handlers.dialog_p.dialog_states import Menu, Customer, Order
-from handlers.dialog_p.orders import order_dialog, dialog_comments, dialog_components
+from handlers.dialog_p.orders import order_dialog, dialog_comments, dialog_components, dialog_status
 
 router = Router()
 
@@ -53,6 +53,7 @@ router.include_router(customer_dialog)
 router.include_router(order_dialog)
 router.include_router(dialog_comments)
 router.include_router(dialog_components)
+router.include_router(dialog_status)
 
 
 @router.message(Command("menu"))

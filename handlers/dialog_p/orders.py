@@ -17,7 +17,7 @@ from handlers.dialog_p.correct_handler_order import correct_name_handler, correc
     correct_address_handler, correct_model_handler, correct_defect_handler, correct_customer_handler, \
     correct_find_order_handler, correct_component_name_handler, correct_component_price_handler
 
-from handlers.dialog_p.dialog_states import Order, Comment, Component
+from handlers.dialog_p.dialog_states import Order, Comment, Component, StatusOrder
 from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter, status_getter, \
     my_order_getter
 from handlers.dialog_p.utils import format_text
@@ -89,6 +89,20 @@ async def select_status(callback: CallbackQuery, widget: Select, dialog_manager:
             int(dialog_manager.dialog_data.get('order_id')),
         )
         await dialog_manager.switch_to(Order.actions_choice_orders)
+
+
+async def select_status_start(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(StatusOrder.get_status, data={"order_id": dialog_manager.dialog_data.get('order_id')})
+
+
+async def select_status_new(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
+    dialog_manager.dialog_data.update(dialog_manager.start_data)
+    dialog_manager.dialog_data['status_order'] = item_id
+    await OrdersActions.status_order(
+        dialog_manager.dialog_data.get('status_order'),
+        int(dialog_manager.dialog_data.get('order_id')),
+    )
+    await dialog_manager.done()
 
 
 async def select_customer(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
@@ -332,27 +346,10 @@ order_dialog = Dialog(
         Button(Const('Подробности'), id='button_detail_order', on_click=order_details),
         Button(Const('Добавить запчасть'), id='send_photo', on_click=get_photo_receipt),
         Button(Const('Добавить коментарий'), id='send_comment', on_click=start_add_comment),
-        Button(Const('Изменить статус заказа'), id='send_status', on_click=send_status),
+        Button(Const('Изменить статус заказа'), id='send_status', on_click=select_status_start),
         Button(Const('Назад'), id='back_8', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Order.actions_choice_orders
-    ),
-    Window(
-        Const('Выберите статус'),
-        ScrollingGroup(Select(
-            Format('{item[0]}'),
-            id='user',
-            item_id_getter=lambda x: x[1],
-            items='elems',
-            on_click=select_status
-        ),
-            id="elems",
-            width=2,
-            height=8
-        ),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
-        state=Order.send_status,
-        getter=status_getter
     ),
     Window(
         Const('Выберите заказ]'),
@@ -373,9 +370,9 @@ order_dialog = Dialog(
     ),
     Window(
         Const('Что будем делать?'),
-        Button(Const('Добавить запчасть'), id='button_start', on_click=get_photo_receipt),
+        Button(Const('Добавить запчасть'), id='add_component', on_click=get_photo_receipt),
         Button(Const('Добавить Комментарий'), id='my_order_add_comment', on_click=start_add_comment),
-        Button(Const('Изменить статус'), id='button_start', on_click=dialog_base_def.go_start),
+        Button(Const('Изменить статус'), id='change_status', on_click=select_status_start),
         Button(Const('Внести деньги'), id='button_start', on_click=dialog_base_def.go_start),
         Button(Const('Вернуться в главное меню'), id='exit_button', on_click=dialog_base_def.go_start),
         state=Order.my_order_actions,
@@ -432,5 +429,23 @@ dialog_components = Dialog(
         Button(Const('Вернуться в главное меню'), id='exit_button', on_click=dialog_base_def.go_start),
         state=Component.get_price
     )
-
+)
+dialog_status = Dialog(
+    Window(
+        Const('Выберите статус'),
+        ScrollingGroup(Select(
+            Format('{item[0]}'),
+            id='user',
+            item_id_getter=lambda x: x[1],
+            items='elems',
+            on_click=select_status_new
+        ),
+            id="elems",
+            width=2,
+            height=8
+        ),
+        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
+        state=StatusOrder.get_status,
+        getter=status_getter
+    )
 )
