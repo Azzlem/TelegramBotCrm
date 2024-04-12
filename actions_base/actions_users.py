@@ -27,7 +27,7 @@ class UserActions:
     @classmethod
     async def get_user_from_id(cls, data):
         async with async_session_maker() as db:
-            user = await db.execute(select(cls.model).filter_by(id=data.id))
+            user = await db.execute(select(cls.model).filter_by(id=int(data.id)))
             if user:
                 return user.scalars().first()
             return False

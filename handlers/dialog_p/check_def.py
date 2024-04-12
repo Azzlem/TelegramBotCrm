@@ -20,7 +20,7 @@ def phone_check(text: str):
     raise ValueError
 
 
-def address_check(text: str):
+def must_be_num_and_str_check(text: str):
     if all(ch.isdigit() for ch in text) or all(ch.isalpha() for ch in text):
         raise ValueError
     return text
@@ -32,13 +32,13 @@ def model_check(text: str):
     return text
 
 
-def defect_check(text: str):
+def not_only_num_check(text: str):
     if all(ch.isdigit() for ch in text):
         raise ValueError
     return text
 
 
-def price_check(text: str):
+def only_num_check(text: str):
     if all(ch.isdigit() for ch in text):
         return text
     raise ValueError

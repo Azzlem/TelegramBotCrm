@@ -6,7 +6,7 @@ from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const
 
 from handlers.dialog_p import dialog_base_def
-from handlers.dialog_p.check_def import name_check, price_check
+from handlers.dialog_p.check_def import name_check, only_num_check
 from handlers.dialog_p.correct_handler_order import correct_component_name_handler, correct_component_price_handler
 from handlers.dialog_p.dialog_states import Component
 from handlers.dialog_p.icorrect_handlers import incorrect_handler
@@ -23,12 +23,12 @@ async def get_photo_handler(message: Message, widget: MessageInput, dialog_manag
 
 dialog_components = Dialog(
     Window(
-        Const('фото чека'),
+        Const('Загрузите фото чека'),
         MessageInput(
             func=get_photo_handler,
             content_types=ContentType.PHOTO,
         ),
-        Button(Const('Назад'), id='back_9', on_click=dialog_base_def.go_back),
+        Button(Const('Назад'), id='back1', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Component.get_photo_receipt
     ),
@@ -40,19 +40,19 @@ dialog_components = Dialog(
             on_success=correct_component_name_handler,
             on_error=incorrect_handler,
         ),
-        Button(Const('Назад'), id='back_10', on_click=dialog_base_def.go_back),
+        Button(Const('Назад'), id='back2', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
         state=Component.get_name
     ),
     Window(
         Const('Напишите цену'),
         TextInput(
-            id='component_name',
-            type_factory=price_check,
+            id='component_price',
+            type_factory=only_num_check,
             on_success=correct_component_price_handler,
             on_error=incorrect_handler,
         ),
-        Button(Const('Назад'), id='back_11', on_click=dialog_base_def.go_back),
+        Button(Const('Назад'), id='back3', on_click=dialog_base_def.go_back),
         Button(Const('Вернуться в главное меню'), id='exit_button', on_click=dialog_base_def.go_start),
         state=Component.get_price
     )

@@ -8,7 +8,7 @@ from aiogram_dialog.widgets.text import Const
 from actions_base.actions_comments import CommentActions
 from actions_base.actions_users import UserActions
 from handlers.dialog_p import dialog_base_def
-from handlers.dialog_p.check_def import defect_check
+from handlers.dialog_p.check_def import not_only_num_check
 from handlers.dialog_p.orders import incorrect_handler
 from models.models import Users
 

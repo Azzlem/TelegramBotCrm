@@ -1,21 +1,18 @@
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager, StartMode
-from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
+from aiogram_dialog.widgets.input import TextInput
 from aiogram_dialog.widgets.kbd import Button, Select, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format
-
-from actions_base.actions_comments import CommentActions
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
+from dataclass import DataClass
 from handlers.dialog_p import dialog_base_def
-from handlers.dialog_p.check_def import name_check, phone_check, address_check, model_check, defect_check, \
-    name_phone_check
-
+from handlers.dialog_p.check_def import (name_check, phone_check, must_be_num_and_str_check, model_check,
+                                         not_only_num_check, name_phone_check)
 from handlers.dialog_p.correct_handler_order import correct_name_handler, correct_phone_handler, \
     correct_address_handler, correct_model_handler, correct_defect_handler, correct_customer_handler, \
     correct_find_order_handler
-
 from handlers.dialog_p.dialog_states import Order, Comment, Component, StatusOrder
 from handlers.dialog_p.icorrect_handlers import incorrect_handler
 from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter, my_order_getter
@@ -47,6 +44,9 @@ async def user_choice(callback: CallbackQuery, widget: Button, dialog_manager: D
 
 async def select_user(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
     dialog_manager.dialog_data['user'] = item_id
+    dialog_manager.dialog_data['id'] = item_id
+    telegram_id = DataClass(dialog_manager.dialog_data)
+    user_to_appointed: Users = await UserActions.get_user_from_id(telegram_id)
     if not dialog_manager.dialog_data.get('customer'):
         customer = await CreateOrderFull.create_customer(data=dialog_manager.dialog_data, customer=None)
         order = await CreateOrderFull.create_order(data=dialog_manager.dialog_data, customer=customer)
@@ -58,6 +58,12 @@ async def select_user(callback: CallbackQuery, widget: Select, dialog_manager: D
 
     await callback.message.answer(
         text=f"Заказ {order.id} на технику {item.vendor}-{item.model}\nКлиента {customer.fullname} успешно создан"
+    )
+    bot = dialog_manager.middleware_data.get('bot')
+    await bot.send_message(
+        chat_id=user_to_appointed.telegram_id,
+        text=f"Заказ {order.id} на технику {item.vendor}-{item.model}\nКлиента {customer.fullname} вам назначен.\n"
+             f"Зайдите в ваши заказы и поменяйте статус на принят у вас 20 минут потом полетит штраф."
     )
     await dialog_manager.start(Order.order_start, mode=StartMode.RESET_STACK)
 
@@ -154,7 +160,7 @@ order_dialog = Dialog(
         Const('Введите адрес'),
         TextInput(
             id='address_input',
-            type_factory=address_check,
+            type_factory=must_be_num_and_str_check,
             on_success=correct_address_handler,
             on_error=incorrect_handler,
         ),
@@ -194,7 +200,7 @@ order_dialog = Dialog(
         Const('Опишите неисправность'),
         TextInput(
             id='defect',
-            type_factory=defect_check,
+            type_factory=not_only_num_check,
             on_success=correct_defect_handler,
             on_error=incorrect_handler,
         ),

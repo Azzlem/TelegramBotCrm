@@ -2,14 +2,12 @@ from aiogram.types import Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import ManagedTextInput
 
-from actions_base.actions_comments import CommentActions
 from actions_base.actions_components import ComponentActions
 from actions_base.actions_customers import CustomerActions
 from actions_base.actions_orders import OrdersActions
-from actions_base.actions_users import UserActions
-from handlers.dialog_p.check_def import name_check, phone_check, address_check, model_check, defect_check
+from handlers.dialog_p.check_def import name_check, phone_check, must_be_num_and_str_check, model_check, not_only_num_check
 from handlers.dialog_p.dialog_states import Order, Component
-from models.models import Users
+
 
 
 async def correct_name_handler(
@@ -35,7 +33,7 @@ async def correct_address_handler(
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
         text: str) -> None:
-    dialog_manager.dialog_data["address"] = address_check(text)
+    dialog_manager.dialog_data["address"] = must_be_num_and_str_check(text)
     await dialog_manager.switch_to(Order.choice_vendor)
 
 
@@ -53,7 +51,7 @@ async def correct_defect_handler(
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
         text: str) -> None:
-    dialog_manager.dialog_data["defect"] = defect_check(text)
+    dialog_manager.dialog_data["defect"] = not_only_num_check(text)
     await dialog_manager.switch_to(Order.user_choice)
 
 
