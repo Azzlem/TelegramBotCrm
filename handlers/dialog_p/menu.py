@@ -9,7 +9,10 @@ from loguru import logger
 from actions_base.actions_users import UserActions
 from handlers.dialog_p.customers import customer_dialog
 from handlers.dialog_p.dialog_states import Menu, Customer, Order
-from handlers.dialog_p.orders import order_dialog, dialog_comments, dialog_components, dialog_status
+from handlers.dialog_p.dialog_windows.dialog_comments_window import dialog_comments
+from handlers.dialog_p.dialog_windows.dialog_components_window import dialog_components
+from handlers.dialog_p.dialog_windows.dialog_status_window import dialog_status
+from handlers.dialog_p.orders import order_dialog
 
 router = Router()
 

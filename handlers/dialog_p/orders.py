@@ -1,7 +1,6 @@
-from aiogram.enums import ContentType
 from aiogram.types import CallbackQuery, Message
 from aiogram_dialog import Dialog, Window, DialogManager, StartMode
-from aiogram_dialog.widgets.input import TextInput, ManagedTextInput, MessageInput
+from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button, Select, ScrollingGroup
 from aiogram_dialog.widgets.text import Const, Format
 
@@ -11,37 +10,22 @@ from actions_base.actions_orders import OrdersActions
 from actions_base.actions_users import UserActions
 from handlers.dialog_p import dialog_base_def
 from handlers.dialog_p.check_def import name_check, phone_check, address_check, model_check, defect_check, \
-    name_phone_check, price_check
+    name_phone_check
 
 from handlers.dialog_p.correct_handler_order import correct_name_handler, correct_phone_handler, \
     correct_address_handler, correct_model_handler, correct_defect_handler, correct_customer_handler, \
-    correct_find_order_handler, correct_component_name_handler, correct_component_price_handler
+    correct_find_order_handler
 
 from handlers.dialog_p.dialog_states import Order, Comment, Component, StatusOrder
-from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter, status_getter, \
-    my_order_getter
+from handlers.dialog_p.icorrect_handlers import incorrect_handler
+from handlers.dialog_p.getters import vendor_getter, user_getter, customers_getter, orders_getter, my_order_getter
 from handlers.dialog_p.utils import format_text
 from models.models import Orders, Users
-from utils import CreateOrderFull, dowmload_image
+from utils import CreateOrderFull
 
 
 async def start_add_comment(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
     await dialog_manager.start(Comment.get_comments, data={"order_id": dialog_manager.dialog_data.get('order_id')})
-
-
-async def correct_add_comment(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
-                              text: str) -> None:
-    dialog_manager.dialog_data["text"] = text
-    dialog_manager.dialog_data.update(dialog_manager.start_data)
-    user: Users = await UserActions.get_user(message.from_user)
-
-    await CommentActions.create(
-        text,
-        int(dialog_manager.dialog_data.get('order_id')),
-        int(user.id)
-    )
-    await message.answer(text="Комментарий успешно добавлен")
-    await dialog_manager.done()
 
 
 async def create_order(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
@@ -78,31 +62,8 @@ async def select_user(callback: CallbackQuery, widget: Select, dialog_manager: D
     await dialog_manager.start(Order.order_start, mode=StartMode.RESET_STACK)
 
 
-async def select_status(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
-    if item_id == "exit":
-        await dialog_manager.switch_to(Order.actions_choice_orders)
-    else:
-        dialog_manager.dialog_data['status_order'] = item_id
-
-        await OrdersActions.status_order(
-            dialog_manager.dialog_data.get('status_order'),
-            int(dialog_manager.dialog_data.get('order_id')),
-        )
-        await dialog_manager.switch_to(Order.actions_choice_orders)
-
-
 async def select_status_start(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(StatusOrder.get_status, data={"order_id": dialog_manager.dialog_data.get('order_id')})
-
-
-async def select_status_new(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
-    dialog_manager.dialog_data.update(dialog_manager.start_data)
-    dialog_manager.dialog_data['status_order'] = item_id
-    await OrdersActions.status_order(
-        dialog_manager.dialog_data.get('status_order'),
-        int(dialog_manager.dialog_data.get('order_id')),
-    )
-    await dialog_manager.done()
 
 
 async def select_customer(callback: CallbackQuery, widget: Select, dialog_manager: DialogManager, item_id: str):
@@ -146,25 +107,6 @@ async def get_photo_receipt(callback: CallbackQuery, widget: Button, dialog_mana
     await dialog_manager.start(
         Component.get_photo_receipt,
         data={"order_id": dialog_manager.dialog_data.get('order_id')}
-    )
-
-
-async def send_status(callback: CallbackQuery, widget: Button, dialog_manager: DialogManager):
-    await dialog_manager.switch_to(Order.send_status)
-
-
-async def get_photo_handler(message: Message, widget: MessageInput, dialog_manager: DialogManager):
-    dialog_manager.dialog_data.update(dialog_manager.start_data)
-    bot = dialog_manager.middleware_data.get('bot')
-    url = await dowmload_image(message, bot)
-    dialog_manager.dialog_data['path_photo'] = url
-    await dialog_manager.switch_to(Component.get_name)
-
-
-async def incorrect_handler(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
-                            error: ValueError):
-    await message.answer(
-        text='Вы ввели что-то не то. Попробуйте еще раз'
     )
 
 
@@ -377,75 +319,4 @@ order_dialog = Dialog(
         Button(Const('Вернуться в главное меню'), id='exit_button', on_click=dialog_base_def.go_start),
         state=Order.my_order_actions,
     ),
-
-)
-
-dialog_comments = Dialog(
-    Window(
-        Const('Напишите комментарий к заказу'),
-        TextInput(
-            id='comment_text',
-            type_factory=defect_check,
-            on_success=correct_add_comment,
-            on_error=incorrect_handler,
-        ),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
-        state=Comment.get_comments
-    ),
-
-)
-dialog_components = Dialog(
-    Window(
-        Const('фото чека'),
-        MessageInput(
-            func=get_photo_handler,
-            content_types=ContentType.PHOTO,
-        ),
-        Button(Const('Назад'), id='back_9', on_click=dialog_base_def.go_back),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
-        state=Component.get_photo_receipt
-    ),
-    Window(
-        Const('Напишите название запчасти'),
-        TextInput(
-            id='component_name',
-            type_factory=name_check,
-            on_success=correct_component_name_handler,
-            on_error=incorrect_handler,
-        ),
-        Button(Const('Назад'), id='back_10', on_click=dialog_base_def.go_back),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
-        state=Component.get_name
-    ),
-    Window(
-        Const('Напишите цену'),
-        TextInput(
-            id='component_name',
-            type_factory=price_check,
-            on_success=correct_component_price_handler,
-            on_error=incorrect_handler,
-        ),
-        Button(Const('Назад'), id='back_11', on_click=dialog_base_def.go_back),
-        Button(Const('Вернуться в главное меню'), id='exit_button', on_click=dialog_base_def.go_start),
-        state=Component.get_price
-    )
-)
-dialog_status = Dialog(
-    Window(
-        Const('Выберите статус'),
-        ScrollingGroup(Select(
-            Format('{item[0]}'),
-            id='user',
-            item_id_getter=lambda x: x[1],
-            items='elems',
-            on_click=select_status_new
-        ),
-            id="elems",
-            width=2,
-            height=8
-        ),
-        Button(Const('Вернуться в главное меню'), id='button_start', on_click=dialog_base_def.go_start),
-        state=StatusOrder.get_status,
-        getter=status_getter
-    )
 )
